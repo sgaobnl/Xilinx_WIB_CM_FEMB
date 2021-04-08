@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 12/26/2019 11:02:03 AM
+Last modified: 4/8/2021 10:24:15 AM
 """
 
 import numpy as np
@@ -17,7 +17,8 @@ from datetime import datetime
 from cls_udp import CLS_UDP
 
 
-datadir = "D:/CM_FEMB/Rawdata/"
+datadir = "D:/CM_FEMB_P2/Rawdata/"
+#datadir = "D:/CM_FEMB/CEbox/"
 now = datetime.now()
 data_time = now.strftime("%m_%d_%Y_%H_%M_%S")
 strin = input("Enter file name without space:")
@@ -28,7 +29,9 @@ time.sleep(1)
 print("Enable UDP data stream")
 udp.write_reg_wib_checked(2, 1)
 time.sleep(1)
-FEMBs = 1
+FEMBs = [0,1,2,3] 
+FEMBs = [0]
+#FEMBs = [1] 
 ASICs = 8
 
 femb=0
@@ -40,7 +43,7 @@ udp.write_reg_wib_checked(7, wib_asic)
 time.sleep(0.01)
 data = udp.get_rawdata_packets(val=1000)
 
-for femb in range(FEMBs):
+for femb in FEMBs:
     for asic in range(ASICs):
         print("FEMB{} ASIC{} is selected".format(femb, asic))
         asic = asic & 0x0F
