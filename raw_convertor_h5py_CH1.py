@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description:
 Created Time: 7/15/2016 11:47:39 AM
-Last modified: 4/26/2021 12:26:41 AM
+Last modified: 5/3/2021 12:04:25 PM
 """
 
 #defaut setting for scientific caculation
@@ -116,124 +116,24 @@ class RAW_CONV():
         self.jumbo_flag = False
 
 COV = RAW_CONV ()
-fdir = "D:/CM_FEMB_P3/Rawdata/"
+fdir = "D:/CM_FEMB_P2/Rawdata/"
 #fdir = "D:/CM_FEMB_P2/Rawdata040921/"
 for root, dirs, files in os.walk(fdir):
     break
-#04092020
-pattern = "RT_noTPC_P4FE_se_P2_ADC_se_14_10_bufoff_asicdac0x10"
-pattern = "RT_noTPC_P4FE_se_P2_ADC_se_14_10_bufoff_asicdac0x08_bl200"
-pattern = "RT_150pF_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_500pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_5000pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_1000pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl900_CM_08"
-pattern = "LN_150pF_P4FE_diff_bufoff_100pA_P2_ADC_diff_14_10_asicdac08_bl900_CM_08"
-pattern = "LN_150pF_P4FE_diff_bufoff_100pA_P2_ADC_diff_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_RMS_bl900_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_05_RMS_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_30_RMS_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_25_10_RMS_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_47_10_RMS_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_78_10_RMS_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufon_100pA_P2_ADC_se_14_10_asicdac08_bl900_CM_08"
-pattern = "LN_150pF_P4FE_se_bufon_100pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "RT_150pF_P4FE_se_bufoff_P2_ADC_se_14_05_RMS_bl200"
-pattern = "RT_150pF_P4FE_se_bufoff_P2_ADC_se_14_10_RMS_bl200"
-pattern = "RT_150pF_P4FE_se_bufoff_P2_ADC_se_14_20_RMS_bl200"
-pattern = "RT_150pF_P4FE_se_bufoff_P2_ADC_se_14_30_RMS_bl200"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac04_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac0c_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac10_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac1c_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac1f_bl200_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac04_bl900_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl900_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac0c_bl900_CM_08"
-pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac14_bl200_CM_08"
-
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x04_bl200"
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x08_bl200"
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x0c_bl200"
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x10_bl200"
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x14_bl200"
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x18_bl200"
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x1c_bl200"
-pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x1f_bl200"
-#04122020
-#pattern = "LN_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_10_asicdac08_bl200"
-#pattern = "RT_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_05_RMS_bl200"
-#pattern = "RT_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_10_RMS_bl200"
-#pattern = "RT_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_20_RMS_bl200"
-#pattern = "RT_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_30_RMS_bl200"
-#pattern = "LN_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_05_RMS_bl200"
-#pattern = "LN_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_10_RMS_bl200"
-#pattern = "LN_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_20_RMS_bl200"
-#pattern = "LN_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_30_RMS_bl200"
-
-#CM P3
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_asicdac08"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_asicdac08"
-
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_RMS"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001405bufoff_P2ADC_se_RMS"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001420bufoff_P2ADC_se_RMS"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001430bufoff_P2ADC_se_RMS"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001410bufoff_P2ADC_se_RMS"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001405bufoff_P2ADC_se_RMS"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001420bufoff_P2ADC_se_RMS"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001430bufoff_P2ADC_se_RMS"
-#
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_RMS"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001405bufoff_P2ADC_se_RMS"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001420bufoff_P2ADC_se_RMS"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001430bufoff_P2ADC_se_RMS"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_9001410bufoff_P2ADC_se_RMS"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_9001405bufoff_P2ADC_se_RMS"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_9001420bufoff_P2ADC_se_RMS"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_9001430bufoff_P2ADC_se_RMS"
-#
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufon_P2ADC_se_RMS"
-#pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001410bufon_P2ADC_se_RMS"
-#
-#
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_asicdac04"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_asicdac1f"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001410bufoff_P2ADC_se_asicdac0c"
-#pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_asicdac1f"
-#pattern = "LN_150pF_CDP3_P4FE_se_100pA_9001410bufoff_P2ADC_se_asicdac10"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_asicdac20"
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001430bufoff_P2ADC_se_asicdac08"
-#pattern = "LN_150pF_CDP3_P4FE_se_100pA_2007810bufoff_P2ADC_se_asicdac04"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001405bufoff_P2ADC_se_asicdac10"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001420bufoff_P2ADC_se_asicdac20"
-#pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001430bufoff_P2ADC_se_asicdac04"
-#
-#pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_RMS"
-#pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001420bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001405bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001420bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001430bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001410bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001405bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001420bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_9001430bufoff_P2ADC_se_RMS"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufoff_P2ADC_se_asicdac20"
-pattern = "RT_150pF_CDP3_P4FE_se_100pA_2001410bufon_P2ADC_se_asicdac08"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_2001410bufon_P2ADC_se_asicdac08"
-pattern = "LN_150pF_CDP3_P4FE_se_100pA_9001410bufoff_P2ADC_se_asicdac08"
+pattern = "Rawdata_04_26_2021_16_41_56_LN_150pF_CDP2_P4FE_se_100pA_2001430bufoff_P2ADC_se_RMS_FEMB0_ASIC0.bin"
+pattern = "Rawdata_04_26_2021_16_43_24_LN_150pF_CDP2_P4FE_se_100pA_2001410bufoff_P2ADC_se_RMS_FEMB0_ASIC0.bin"
+pattern = "Rawdata_04_26_2021_16_44_57_LN_150pF_CDP2_P4FE_se_100pA_2001405bufoff_P2ADC_se_RMS_FEMB0_ASIC0.bin"
+pattern = "LN_150pF_CDP2_P4FE_se_100pA_2001410bufoff_P2ADC_se_RMS_run04_FEMB0_ASIC0.bin"
+pattern = "LN_150pF_CDP2_P4FE_se_100pA_2001410bufoff_P2ADC_se_RMS_run04_FEMB0_ASIC0.bin"
+pattern = "LN_150pF_CDP2_P4FE_se_100pA_2001405bufoff_P2ADC_se_RMS_run04_FEMB0_ASIC0.bin"
 
 
 for afile in files:
     if (pattern in afile)  and (".bin" in afile):
         fn = fdir + afile
         print(fn)
-        fembno = int( afile[afile.find("FEMB")+4] )
-        asicno = int( afile[afile.find("ASIC")+4] )
+        fembno = 0
+        asicno = 0
         fsize = (os.path.getsize(fn))
         slice_n = 100000
         tmp1 = afile.find(pattern)

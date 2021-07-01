@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description:
 Created Time: 7/15/2016 11:47:39 AM
-Last modified: 4/8/2021 10:52:53 AM
+Last modified: 4/12/2021 11:43:58 AM
 """
 
 #defaut setting for scientific caculation
@@ -24,81 +24,78 @@ import h5py
 #import matplotlib.gridspec as gridspec
 #import matplotlib.patches as mpatches
 
-fdir = "D:/CM_FEMB/Rawdata/"
-fdir = "D:/CM_FEMB/APA_data/"
-#fdir = "D:/CM_FEMB/Rawdata/"
-#fdir = "D:/CM_FEMB/CEbox/"
-#fdir = "D:/CM_FEMB/Rawdata/"
-fdir = "D:/CM_FEMB/APA_data_run1/"
-#fdir = "D:/CM_FEMB/Rawdata/"
-fdir = "D:/CM_FEMB/Rawdata/"
-fdir = "D:/CM_FEMB/APA_data/"
-#fp = "CHK_LN_CM04_AM01_Toy04L21R_150pF_14_10_bl200_bufoff_asicdac08_150pF.h5"
-fp = "Rawdata_12_31_2020_11_32_49_APA40_slot0123on_CHK_LN_14_10_bl900_asicdac08.h5"
-fp = "Rawdata_01_15_2021_13_55_05_APA40_LN_CHK_slot0123on_14_10_bl900_ascidac08.h5"
-fp = "Rawdata_01_15_2021_13_55_05_APA40_LN_CHK_slot0123on_14_10_bl900_ascidac08.h5"
-fp = "Rawdata_01_15_2021_13_08_37_APA40_LN_CHK_slot0123on_14_10_asic08_bl200.h5"
-fp = "Rawdata_12_31_2020_11_32_49_APA40_slot0123on_CHK_LN_14_10_bl900_asicdac08.h5"
-fp = "Rawdata_12_31_2020_08_17_36_APA40_slot0on_CHK_LN_14_10_bl900_asicdac08.h5"
-fp = "Rawdata_12_29_2020_14_36_20_APA40_CHK_14_10_asicdac08_bl200.h5"
-fp = "Rawdata_12_30_2020_11_45_07_APA40_slot0123on_CALI_14_10_bl200_asicdac08.h5"
-fp = "Rawdata_12_31_2020_07_40_48_APA40_slot0123on_CHK_LN_14_10_bl200_asicdac08.h5"
-#fp = "Rawdata_01_15_2021_13_55_05_APA40_LN_CHK_slot0123on_14_10_bl900_ascidac08.h5"
-fp = "Rawdata_01_15_2021_13_59_09_APA40_LN_CHK_slot0123on_14_10_bl200_ascidac08.h5"
-#fp = "Rawdata_01_15_2021_14_07_56_APA40_LN_CHK_slot0123on_14_10_bl200_ascidac12.h5"
-#fp = "RT.h5"
-#fp = "Rawdata_12_29_2020_08_05_07_CALI_LN_CM12_AM10_ToyTPC04L21R_150pF_14_05_bl900_bufoff_asicdac04.h5"
-fdir = "D:/CM_FEMB/Rawdata/"
-#fp = "CALI_LN_CM12_AM10_ToyTPC04L21R_150pF_14_05_bl900_bufoff_asicdac08.h5"
-fp = "CALI_LN_CM12_AM10_ToyTPC04L21R_150pF_14_10_bl900_bufoff_asicdac08.h5"
-#fp = "CALI_LN_CM12_AM10_ToyTPC04L21R_150pF_14_20_bl900_bufoff_asicdac08.h5"
-#fp = "CALI_LN_CM12_AM10_ToyTPC04L21R_150pF_14_30_bl900_bufoff_asicdac08.h5"
-fdir = "D:/CM_FEMB_P2/Rawdata/"
-fp = "RT_noTPC_P4FE_se_P2_ADC_se_14_10_bufon_asicdac08.h5"
+fdir = "D:/CM_FEMB_P2/Rawdata040921/"
+frst = "D:/CM_FEMB_P2/results_04092021/"
+#pattern = "RT_noTPC_P4FE_se_P2_ADC_se_14_10_bufoff_asicdac0x10"
+pattern = "RT_noTPC_P4FE_se_P2_ADC_se_14_10_bufoff_asicdac0x08_bl200"
+pattern = "RT_150pF_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
+#pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08" 
+#pattern = "LN_150pF_P4FE_se_bufoff_500pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08" 
+#pattern = "LN_150pF_P4FE_se_bufoff_1000pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08" 
+#pattern = "LN_150pF_P4FE_se_bufoff_5000pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08" 
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl900_CM_08" 
+pattern = "LN_150pF_P4FE_diff_bufoff_100pA_P2_ADC_diff_14_10_asicdac08_bl900_CM_08"
+pattern = "LN_150pF_P4FE_diff_bufoff_100pA_P2_ADC_diff_14_10_asicdac08_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac04_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac0c_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac10_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac1c_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac1f_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac04_bl900_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac08_bl900_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac0c_bl900_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac14_bl200_CM_08"
+pattern = "LN_150pF_P4FE_se_bufoff_100pA_P2_ADC_se_14_10_asicdac18_bl200_CM_08"
+
+pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x04_bl200"
+pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x08_bl200"
+pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x0c_bl200"
+pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x10_bl200"
+pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x14_bl200"
+pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x18_bl200"
+pattern = "RT_noTPC_P4FE_se_bufoff_P2_ADC_se_14_10_asicdac0x1c_bl200"
+
+#04122021
+#pattern = "LN_150pF_P4FE_se_100pA_bufoff_P2_ADC_se_14_10_asicdac08_bl200"
+fp = pattern + ".h5"
 
 f = h5py.File(fdir + fp, 'r')
 keys = list(f.keys())
-#print(keys)
-#exit()
-#dset0 = f["CH0"]
-#dset1 = f["CH1"]
-#dset13 = f["CH13"]
 fembs=[0]
-#fembs=[0,1,2,3]
-#fembs=[0]
-#fembs=[0,2,3]
 import matplotlib.pyplot as plt
 
 for fembi in fembs:
-    fig = plt.figure(figsize=(12, 8))
+    fig = plt.figure(figsize=(16, 12))
     plt.rcParams.update({'font.size': 16})
     for k in range(8):
         x = 420 + k+1
         plt.subplot(x)
         for i in range(16):
-        #for i in [15]:
-#        for i in [1]:
             key="CH{}".format(128*fembi + 16*k + i)
-            dlen = 500
+            dlen = 2000
             x = np.arange(dlen)
             y = f[key][0:dlen]
-#            ymaxpos = np.where(y == np.max(y))[0][0]
-            #print (ymaxpos)
-            plt.plot(x,y, label=key, color = "C{}".format(k))
-            
-            #plt.plot(x*0.5,y[ymaxpos-50:ymaxpos+50] , marker='.', label=key, color = "C{}".format(k))
+            ymaxpos = np.where(y[500:1500] == np.max(y[500:1500]))[0][0] + 500
+#            plt.plot(x,y, label=key, color = "C{}".format(k))
+            plt.plot(x[0:100]*0.5,y[ymaxpos-50:ymaxpos+50] ,label=key, color = "C{}".format(i%10))
 #            plt.ylim((0,4000)) 
-#            plt.xlim((0,50)) 
-#            plt.grid()
-#        break
+            plt.xlim((0,50)) 
+            plt.grid(True)
+            plt.xlabel("Time / $\mu$s")
+            plt.ylabel("Amplitude / bin")
+
+            plt.title("Waveform: CH{} to CH{}".format(k*16, (k+1)*16-1))
 #            plt.ylim((np.mean(y)-10,(np.mean(y)+10))) 
     #        plt.draw()
     #        plt.legend()
     #        plt.pause(0.5)
     plt.tight_layout()
-    plt.show()
+#    plt.show()
+    plt.savefig(frst+fp[0:-3] + "wfm.png")
     plt.close()
-#
+
 for fembi in fembs:
     fig = plt.figure(figsize=(16, 12))
     plt.rcParams.update({'font.size': 18})
@@ -112,14 +109,24 @@ for fembi in fembs:
 
     for k in range(8):
         x = 420 + k+1
-        #plt.subplot(x)
-        plt.subplot(421)
+        plt.subplot(x)
         for i in range(16):
             key="CH{}".format(fembi*128 + 16*k + i)
             y = f[key][0:dlen]
             #plocs = detect_peaks(y, mph=None, mpd=50, threshold=500, edge='rising')
-            plocs, _ = find_peaks(y,  height=500)
-    
+            py = np.array(y.astype('int16')) - int(np.mean(y))
+            plocs, _ = find_peaks(py,  height=300)
+            if len(plocs) > 2:
+                break
+        if len(plocs) < 2: 
+            plocs = np.arange(0, 369*261, 261)
+
+        for i in range(16):
+            key="CH{}".format(fembi*128 + 16*k + i)
+            y = f[key][0:dlen]
+            #plocs = detect_peaks(y, mph=None, mpd=50, threshold=500, edge='rising')
+            #py = np.array(y.astype('int16')) - int(np.mean(y))
+            #plocs, _ = find_peaks(py,  height=100)
             xlen = plocs[2] - plocs[1] - 10
             avgm = 100
             tmp = []
@@ -132,27 +139,26 @@ for fembi in fembs:
                     tmp = np.append(tmp, y[(plocs[1+m]+50):(plocs[1+m]+150)].astype('uint64'))
             peds.append(np.mean(tmp))
             rmss.append(np.std(tmp))
-            #ay = (ay/avgm) - np.mean(tmp)
             ay = (ay/avgm) 
             ymax.append(np.max(ay))
             pks.append(np.max(ay))
             x = np.arange(xlen)
-            #if i%16 ==0: 
-            #    plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(k))
-            #    plt.legend()
-            #else:
-            #    plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
-            plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
-        plt.xlabel("Time / us")
+            if i%16 ==0: 
+                plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(k))
+                plt.legend()
+            else:
+                plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
+            #plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
+        plt.xlabel("Time / $\mu$s")
         plt.ylabel("Amplitude / bin")
-#    print (np.mean(ymax), np.std(ymax))
-#    fig.suptitle("Response to Calibration Pulser")
-    plt.xlim((0,50))
-    plt.ylim((-1000,1000))
-    plt.grid()
+        plt.title("Averaging Waveforms")
+        plt.grid(True)
+        plt.xlim((0,50))
+    print (np.mean(ymax), np.std(ymax))
+#    plt.ylim((-1000,1000))
     plt.tight_layout()
-    plt.show()
-#    plt.savefig("abc.png")
+    #plt.show()
+    plt.savefig(frst+fp[0:-3] + "wfm_avg.png")
     plt.close()
 
     import pickle
@@ -166,6 +172,9 @@ for fembi in fembs:
     chnnos = np.arange(128)
     plt.plot(chnnos, ymax, marker = '.', color ='r', label = "Pulse Amplitude")
     plt.plot(chnnos, peds, marker = '.', color ='b', label = "Pedestal")
+    for i in range(8):
+        plt.vlines(i*16-0.5,0, 4100, linestyles="dashed", colors='g')
+
     plt.xlim((-1,129))
     plt.ylim((0,4100))
     plt.ylabel("ADC output / bin")
@@ -174,11 +183,38 @@ for fembi in fembs:
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(frst+fp[0:-3] + "pls_ped_dis.png")
     plt.close()
 
     fig = plt.figure(figsize=(12, 8))
     plt.rcParams.update({'font.size': 24})
+
+
+
+    fig = plt.figure(figsize=(12, 8))
+    plt.rcParams.update({'font.size': 24})
+    ax1 = fig.add_subplot(111)
+    ax1.plot(np.arange(len(rmss)), rmss, marker = '.', color ='r', label = "RMS noise / bin")
+    #ax1.plot(np.arange(len(rmss)), np.array(rmss)*200, marker = '.', color ='r', label = "LN2, Cd=150pF, ENC=(%d +/- %d) e-"%(np.mean(np.array(rmss)*200), np.std(np.array(rmss)*200)))
+    #import pickle
+    #fsp =fdir + "femb_%d_rms.bin"%fembi
+    #with open(fsp, 'wb') as fn:
+    #    pickle.dump(rmss, fn)
+    #ax1.set_ylim((0,2000))
+    for i in range(8):
+        plt.vlines(i*16-0.5,0, int(np.max(rmss))+2, linestyles="dashed", colors='g')
+    plt.ylabel("ADC counts / bin")
+    plt.legend()
+    plt.legend()
+    plt.xlabel("Channel number")
+    plt.grid(axis='both')
+    plt.tight_layout()
+    #plt.show()
+    plt.savefig(frst+fp[0:-3] + "pls_rms_dis.png")
+    plt.close()
+
+    exit()
+
 #    plt.subplot(311)
 #    plt.plot(np.arange(len(peds)), peds, marker = '.', color ='b', label = "Pedestal / bin")
 #    plt.ylim((0,4100))
