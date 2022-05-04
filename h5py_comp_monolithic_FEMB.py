@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description:
 Created Time: 7/15/2016 11:47:39 AM
-Last modified: 7/5/2021 2:09:29 PM
+Last modified: 7/5/2021 1:35:21 PM
 """
 
 #defaut setting for scientific caculation
@@ -24,133 +24,165 @@ import h5py
 #import matplotlib.gridspec as gridspec
 #import matplotlib.patches as mpatches
 
-
 fdir = "D:/Monolithic_FEMB/Rawdata/"
-frst = "D:/Monolithic_FEMB/Results/"
-pattern = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_Gain_ADAC0x08.h5"
+fps = [ 
+        "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1405_COMP_ADAC0x10.h5", 
+        "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1410_COMP_ADAC0x10.h5", 
+        "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_COMP_ADAC0x10.h5", 
+        "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1430_COMP_ADAC0x10.h5", 
+        #"RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_900BL1405_COMP_ADAC0x10.h5", 
+        #"RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_900BL1410_COMP_ADAC0x10.h5", 
+        #"RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_900BL1420_COMP_ADAC0x10.h5", 
+        #"RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_900BL1430_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1405_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1410_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1430_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_900BL1405_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_900BL1410_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_900BL1420_COMP_ADAC0x10.h5", 
+#        "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_900BL1430_COMP_ADAC0x10.h5", 
 
-def sinc_interp(x, s, u):
-    if len(x) != len(s):
-        raise ValueError('x and s must be the same length')
-    # Find the period    
-    T = s[1] - s[0]
-    sincM = np.tile(u, (len(s), 1)) - np.tile(s[:, np.newaxis], (1, len(u)))
-    y = np.dot(x, np.sinc(sincM/T))
-    return y
+        ]
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_900BL1410_COMP_ADAC0x10.h5"
+labels = ( "14 mV/fC, 0.5us",  "14 mV/fC, 1.0us",  "14 mV/fC, 2.0us",  "14 mV/fC, 3.0us" ) 
 
-import matplotlib.pyplot as plt
-fig = plt.figure(figsize=(8, 6))
-plt.rcParams.update({'font.size': 18})
 
-#patterns = [pattern05, pattern10,pattern20,pattern30]
-
-#for abc in range(4):
-for abc in [1]:
-#    pattern  = patterns[abc]
-    fp = pattern + ".h5"
-    
+fp_amp_chns = []
+for fp in fps:
     f = h5py.File(fdir + fp, 'r')
     keys = list(f.keys())
     fembs=[0]
+    import matplotlib.pyplot as plt
+    period = 519
     
+    amp_chns = []
     for fembi in fembs:
-        from scipy.signal import find_peaks, peak_widths
-        dlen = 300000
-        rmss = []
-        pks = []
-        peds = []
-        ymax = []
-        for k in range(1):
+        for k in range(8):
             for i in range(16):
-                key="CH{}".format(fembi*128 + 16*k + i)
-                y = f[key][0:dlen]
-                py = np.array(y.astype('int16')) - int(np.mean(y))
-                plocs, _ = find_peaks(py,  height=500)
-                if len(plocs) > 2:
-                    break
-            if len(plocs) < 2: 
-                plocs = np.arange(0, 369*261, 261)
-    
-            for i in [1]:
-                key="CH{}".format(fembi*128 + 16*k + i)
-                y = f[key][0:dlen]
-                xlen = plocs[2] - plocs[1] - 10
-                avgm = 10
-                tmp = []
-                for m in range(avgm):
-                    if (m==0):
-                        ay=y[(plocs[1]-50):(plocs[1]+xlen-50)].astype('uint64')
-                        tmp = y[(plocs[1]+50):(plocs[1]+150)].astype('uint64')
+                key="CH{}".format(128*fembi + 16*k + i)
+                y = f[key][0:]
+                y_oft = np.where(y[period:period*2] == np.max(y[period:period*2]))[0][0] + period
+                y = y[y_oft-50:]
+                leny = len(y)
+                avg_n = (leny//period - 10)
+                for a in range(avg_n):
+                    if (a==0):
+                        ay=y[0:period].astype('uint64')
                     else:
-                        ay=ay + y[(plocs[1 + m]-50):(plocs[1+m]+xlen-50)].astype('uint64')
-                        tmp = np.append(tmp, y[(plocs[1+m]+50):(plocs[1+m]+150)].astype('uint64'))
-                peds.append(np.mean(tmp))
-                rmss.append(np.std(tmp))
-                ay = (ay/avgm) - np.mean(tmp)
-                ymax.append(np.max(ay))
-                pks.append(np.max(ay))
-                x = np.arange(xlen)
-                x = np.arange(xlen)
-#                k = 0 
-#                l = 100 
-#                i_p = 100
-#                s = np.arange(k, l)
-#                u = np.linspace(k,l,(l-k)*i_p)
-#                aysinc = sinc_interp(ay[0:100], s, u)
-#                print (len(aysinc))
-#
-                if i%16 ==0: 
-                    plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(abc))
-                    plt.legend()
-                else:
-                    #plt.plot(x[0:100]*0.5,ay[0:100], marker = '.',  color = "C{}".format(abc))
-                    plt.plot(x[0:100]*0.5,ay[0:100],  marker = '.', label= "ASIC00CH1", color = "C{}".format(abc))
-                    plt.legend()
-            plt.xlabel("Time / $\mu$s")
-            plt.ylabel("Amplitude / bin")
-            plt.title("Averaging Waveforms")
+                        ay=ay + y[period*a:period*(a+1)].astype('uint64')
+                ay = ay/avg_n
+                amp = np.max(ay) - ay[0]
+                amp_chns.append(amp)
+    fp_amp_chns.append(amp_chns)
+
+fig = plt.figure(figsize=(12, 8))
+plt.rcParams.update({'font.size': 16})
+#for i in range(8):
+for i in range(4):
+    plt.plot(np.arange(128), fp_amp_chns[i], marker = '.', label = labels[i])
+    #plt.plot(np.arange(128), fp_amp_chns[i], marker = '.')
+    plt.legend()
+plt.xlabel("Samples")
+plt.ylabel("ADC amplitude / bin")
+plt.show()
+plt.close()
+exit()
+
+#            fig = plt.figure(figsize=(12, 8))
+#            plt.rcParams.update({'font.size': 16})
+#            plt.plot(np.arange(period), ay, marker = '.')
+#            plt.show()
+#            plt.close()
+#            exit()
+        
+#            pps.append(np.max(y))
+#            pns.append(np.min(y))
+#            peds.append(int(np.mean(y[ymaxpos-100:ymaxpos-50])))
+            
+
+#            if (i == 0):
+#                plt.legend()
+#    plt.tight_layout()
+#    plt.show()
+#    plt.close()
+
+exit()
+
+
+
+
+pps = []
+pns = []
+peds = []
+
+for fembi in fembs:
+    fig = plt.figure(figsize=(12, 8))
+    plt.rcParams.update({'font.size': 16})
+    for k in range(8):
+        x = 420 + k+1
+        plt.subplot(x)
+        for i in range(16):
+            key="CH{}".format(128*fembi + 16*k + i)
+            dlen = 5000
+            x = np.arange(dlen)
+            y = f[key][0:dlen]
+            if (i == 0):
+                oft = 1000
+                ymaxpos = np.where(y[oft:] == np.max(y[oft:]))[0][0] + oft
+            pps.append(np.max(y))
+            pns.append(np.min(y))
+            peds.append(int(np.mean(y[ymaxpos-100:ymaxpos-50])))
+            
+            pltlen = 50
+            x = np.arange(pltlen)
+            plt.plot(x*0.5,y[ymaxpos-(pltlen//2):ymaxpos+(pltlen//2)] , marker='.', label="ASIC%02d"%k, color = "C{}".format(k))
             plt.grid(True)
-            plt.xlim((15,35))
-            plt.ylim((-100,1500))
-        print (np.mean(ymax), np.std(ymax))
+            plt.ylim((0,5000))
+            plt.xlim((0,(pltlen//2)))
+
+            if (i == 0):
+                plt.legend()
+    plt.tight_layout()
+    plt.show()
+    plt.close()
+
+fig = plt.figure(figsize=(12, 8))
+plt.rcParams.update({'font.size': 16})
+x = np.arange(128)
+plt.plot(x, peds, marker = '.', label="Pedestal")
+plt.legend()
+plt.plot(x, pps, marker = '.', label="Pos Peak")
+plt.legend()
+plt.plot(x, pns, marker = '.', label="Neg Peak")
+plt.legend()
+plt.xlabel("Channel #")
+plt.ylabel("ADC output / bin")
+plt.ylim((-100,5000))
+plt.xlim((-5,130))
+#plt.grid(True)
+for i in range(8):
+    plt.vlines(i*16-0.5, 0, 5000, color = 'c')
 plt.tight_layout()
-#plt.show()
-plt.savefig(frst+fp[0:-3] + "wfm_avg_gains.png")
+plt.show()
 plt.close()
 
+fig = plt.figure(figsize=(12, 8))
+plt.rcParams.update({'font.size': 16})
+x = np.arange(128)
+plt.plot(x, np.array(pps)-np.array(peds), marker = '.', label="Pos PLS Amp")
+plt.legend()
+plt.xlabel("Channel #")
+plt.ylabel("ADC output / bin")
+plt.ylim((-100,5000))
+plt.xlim((-5,130))
+#plt.grid(True)
+for i in range(8):
+    plt.vlines(i*16-0.5, 0, 5000, color = 'c')
+plt.tight_layout()
+plt.show()
+plt.close()
 
-
-
-
-#for fembi in fembs:
-#    fig = plt.figure(figsize=(16, 12))
-#    plt.rcParams.update({'font.size': 16})
-#    for k in range(8):
-#        x = 420 + k+1
-#        plt.subplot(x)
-#        for i in range(16):
-#            key="CH{}".format(128*fembi + 16*k + i)
-#            dlen = 4000
-#            x = np.arange(dlen)
-#            y = f[key][0:dlen]
-#            ymaxpos = np.where(y[500:3500] == np.max(y[500:3500]))[0][0] + 500
-##            plt.plot(x,y, label=key, color = "C{}".format(k))
-#            plt.plot(x[0:100]*0.5,y[ymaxpos-50:ymaxpos+50] ,label=key, color = "C{}".format(i%10))
-##            plt.ylim((0,4000)) 
-#            plt.xlim((0,50)) 
-#            plt.grid(True)
-#            plt.xlabel("Time / $\mu$s")
-#            plt.ylabel("Amplitude / bin")
-#
-#            plt.title("Waveform: CH{} to CH{}".format(k*16, (k+1)*16-1))
-##            plt.ylim((np.mean(y)-10,(np.mean(y)+10))) 
-#    #        plt.draw()
-#    #        plt.legend()
-#    #        plt.pause(0.5)
-#    plt.tight_layout()
-##    plt.show()
-#    plt.savefig(frst+fp[0:-3] + "wfm.png")
-#    plt.close()
 #
 #for fembi in fembs:
 #    fig = plt.figure(figsize=(16, 12))
@@ -165,27 +197,16 @@ plt.close()
 #
 #    for k in range(8):
 #        x = 420 + k+1
-#        plt.subplot(x)
+#        #plt.subplot(x)
+#        plt.subplot(421)
 #        for i in range(16):
 #            key="CH{}".format(fembi*128 + 16*k + i)
 #            y = f[key][0:dlen]
 #            #plocs = detect_peaks(y, mph=None, mpd=50, threshold=500, edge='rising')
-#            py = np.array(y.astype('int16')) - int(np.mean(y))
-#            plocs, _ = find_peaks(py,  height=300)
-#            if len(plocs) > 2:
-#                break
-#        print (plocs)
-#        if len(plocs) < 2: 
-#            plocs = np.arange(0, 369*261, 261)
-#
-#        for i in range(16):
-#            key="CH{}".format(fembi*128 + 16*k + i)
-#            y = f[key][0:dlen]
-#            #plocs = detect_peaks(y, mph=None, mpd=50, threshold=500, edge='rising')
-#            #py = np.array(y.astype('int16')) - int(np.mean(y))
-#            #plocs, _ = find_peaks(py,  height=100)
+#            plocs, _ = find_peaks(y,  height=500)
+#    
 #            xlen = plocs[2] - plocs[1] - 10
-#            avgm = 10
+#            avgm = 100
 #            tmp = []
 #            for m in range(avgm):
 #                if (m==0):
@@ -196,26 +217,27 @@ plt.close()
 #                    tmp = np.append(tmp, y[(plocs[1+m]+50):(plocs[1+m]+150)].astype('uint64'))
 #            peds.append(np.mean(tmp))
 #            rmss.append(np.std(tmp))
+#            #ay = (ay/avgm) - np.mean(tmp)
 #            ay = (ay/avgm) 
 #            ymax.append(np.max(ay))
 #            pks.append(np.max(ay))
 #            x = np.arange(xlen)
-#            if i%16 ==0: 
-#                plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(k))
-#                plt.legend()
-#            else:
-#                plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
-#            #plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
-#        plt.xlabel("Time / $\mu$s")
+#            #if i%16 ==0: 
+#            #    plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(k))
+#            #    plt.legend()
+#            #else:
+#            #    plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
+#            plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
+#        plt.xlabel("Time / us")
 #        plt.ylabel("Amplitude / bin")
-#        plt.title("Averaging Waveforms")
-#        plt.grid(True)
-#        plt.xlim((0,50))
-#    print (np.mean(ymax), np.std(ymax))
-##    plt.ylim((-1000,1000))
+##    print (np.mean(ymax), np.std(ymax))
+##    fig.suptitle("Response to Calibration Pulser")
+#    plt.xlim((0,50))
+#    plt.ylim((-1000,1000))
+#    plt.grid()
 #    plt.tight_layout()
-#    #plt.show()
-#    plt.savefig(frst+fp[0:-3] + "wfm_avg.png")
+#    plt.show()
+##    plt.savefig("abc.png")
 #    plt.close()
 #
 #    import pickle
@@ -229,9 +251,6 @@ plt.close()
 #    chnnos = np.arange(128)
 #    plt.plot(chnnos, ymax, marker = '.', color ='r', label = "Pulse Amplitude")
 #    plt.plot(chnnos, peds, marker = '.', color ='b', label = "Pedestal")
-#    for i in range(8):
-#        plt.vlines(i*16-0.5,0, 4100, linestyles="dashed", colors='g')
-#
 #    plt.xlim((-1,129))
 #    plt.ylim((0,4100))
 #    plt.ylabel("ADC output / bin")
@@ -240,38 +259,11 @@ plt.close()
 #    plt.legend()
 #
 #    plt.tight_layout()
-#    plt.savefig(frst+fp[0:-3] + "pls_ped_dis.png")
+#    plt.show()
 #    plt.close()
 #
 #    fig = plt.figure(figsize=(12, 8))
 #    plt.rcParams.update({'font.size': 24})
-#
-#
-#
-#    fig = plt.figure(figsize=(12, 8))
-#    plt.rcParams.update({'font.size': 24})
-#    ax1 = fig.add_subplot(111)
-#    ax1.plot(np.arange(len(rmss)), rmss, marker = '.', color ='r', label = "RMS noise / bin")
-#    #ax1.plot(np.arange(len(rmss)), np.array(rmss)*200, marker = '.', color ='r', label = "LN2, Cd=150pF, ENC=(%d +/- %d) e-"%(np.mean(np.array(rmss)*200), np.std(np.array(rmss)*200)))
-#    #import pickle
-#    #fsp =fdir + "femb_%d_rms.bin"%fembi
-#    #with open(fsp, 'wb') as fn:
-#    #    pickle.dump(rmss, fn)
-#    #ax1.set_ylim((0,2000))
-#    for i in range(8):
-#        plt.vlines(i*16-0.5,0, int(np.max(rmss))+2, linestyles="dashed", colors='g')
-#    plt.ylabel("ADC counts / bin")
-#    plt.legend()
-#    plt.legend()
-#    plt.xlabel("Channel number")
-#    plt.grid(axis='both')
-#    plt.tight_layout()
-#    #plt.show()
-#    plt.savefig(frst+fp[0:-3] + "pls_rms_dis.png")
-#    plt.close()
-#
-#    exit()
-#
 ##    plt.subplot(311)
 ##    plt.plot(np.arange(len(peds)), peds, marker = '.', color ='b', label = "Pedestal / bin")
 ##    plt.ylim((0,4100))

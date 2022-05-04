@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 1/15/2021 1:31:35 PM
+Last modified: 4/12/2022 11:52:26 AM
 """
 
 #defaut setting for scientific caculation
@@ -55,7 +55,7 @@ class CLS_UDP:
         sock_readresp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Internet, UDP
         sock_readresp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock_readresp.bind(('', self.UDP_PORT_RREGRESP ))
-        sock_readresp.settimeout(2)
+        sock_readresp.settimeout(1)
 
         #crazy packet structure require for UDP interface
         READ_MESSAGE = struct.pack('HHHHHHHHH',socket.htons(self.KEY1), socket.htons(self.KEY2),socket.htons(regVal),0,0,socket.htons(self.FOOTER),0,0,0)
@@ -93,14 +93,10 @@ class CLS_UDP:
     def write_reg_wib_checked (self, reg , data ):
         i = 0
         while (i < 10 ):
-            time.sleep(0.001)
             self.write_reg_wib(reg , data )
             self.wib_wr_cnt = self.wib_wr_cnt + 1
-            time.sleep(0.001)
             rdata = self.read_reg_wib(reg)
-            time.sleep(0.001)
             rdata = self.read_reg_wib(reg)
-            time.sleep(0.001)
             if (data == rdata ):
                 break
             else:
@@ -116,7 +112,7 @@ class CLS_UDP:
         sock_data = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Internet, UDP
         sock_data.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock_data.bind(('', self.UDP_PORT_HSDATA))
-        sock_data.settimeout(2)
+        sock_data.settimeout(1)
         #receive data, don't pause if no response
         try:
             #data = sock_data.recv(8*1024)
@@ -139,24 +135,26 @@ class CLS_UDP:
         sock_data.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock_data.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 8192000)
         sock_data.bind(('',self.UDP_PORT_HSDATA))
-        sock_data.settimeout(3)
+        sock_data.settimeout(1)
         rawdataPackets = []
         for packet in range(0,numVal,1):
             data = None
             try:
                 data = sock_data.recv(8192)
             except socket.timeout:
+                print ("ERROR: UDP timeout")
                 self.udp_hstimeout_cnt = self.udp_hstimeout_cnt  + 1
-                if (timeout_cnt == 10):
-                    sock_data.close()
-                    print ("ERROR: UDP timeout, Please check if there is any conflict (someone else try to control WIB at the same time), continue anyway")
-                    return None
-                else:
-                    timeout_cnt = timeout_cnt + 1
-                    self.write_reg_wib_checked (15, 0)
-                    print ("ERROR: UDP timeout,  Please check if there is any conflict, Try again in 3 seconds")
-                    time.sleep(3)
-                    continue
+                sock_data.close()
+                return None
+#                if (timeout_cnt == 5):
+#                    sock_data.close()
+#                    print ("ERROR: UDP timeout, Please check if there is any conflict (someone else try to control WIB at the same time), continue anyway")
+#                    return None
+#                else:
+#                    timeout_cnt = timeout_cnt + 1
+#                    self.write_reg_wib_checked (15, 0)
+#                    print ("ERROR: UDP timeout,  Please check if there is any conflict, Try again in 3 seconds")
+#                    continue
             if data != None :
                 rawdataPackets.append(data)
         sock_data.close()

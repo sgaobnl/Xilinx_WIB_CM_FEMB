@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 4/26/2021 4:31:13 PM
+Last modified: 3/15/2022 1:38:41 PM
 """
 
 import numpy as np
@@ -17,11 +17,14 @@ from datetime import datetime
 from cls_udp import CLS_UDP
 
 
-datadir = "D:/CM_FEMB_P2/Rawdata/"
+#datadir = "D:/CM_FEMB_P2/Rawdata/"
 #datadir = "D:/CM_FEMB/CEbox/"
+#datadir = "D:/Monolithic_FEMB/Rawdata/"
+datadir = "D:/FEMB_IO1826_1A/Toy_PCB_TPC/"
 now = datetime.now()
 data_time = now.strftime("%m_%d_%Y_%H_%M_%S")
 strin = input("Enter file name without space:")
+print (strin)
 
 udp = CLS_UDP()
 udp.write_reg_wib_checked(2, 1)
@@ -54,9 +57,9 @@ for femb in FEMBs:
         time.sleep(0.01)
         fn = "Rawdata_" + data_time + "_" + strin + "_FEMB{}_ASIC{}".format(femb,asic) + ".bin"
         if "RMS" in strin:
-            val = 50000
+            val = 20000
         else:
-            val = 10000
+            val = 2000
         data = udp.get_rawdata_packets(val=val)
         with open(datadir + fn, "wb") as fp:
             fp.write(data)

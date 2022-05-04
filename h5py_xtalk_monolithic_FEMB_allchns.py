@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description:
 Created Time: 7/15/2016 11:47:39 AM
-Last modified: 7/5/2021 2:09:29 PM
+Last modified: 8/29/2021 4:10:12 PM
 """
 
 #defaut setting for scientific caculation
@@ -24,133 +24,246 @@ import h5py
 #import matplotlib.gridspec as gridspec
 #import matplotlib.patches as mpatches
 
-
 fdir = "D:/Monolithic_FEMB/Rawdata/"
-frst = "D:/Monolithic_FEMB/Results/"
-pattern = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_Gain_ADAC0x08.h5"
+frst = "D:/Monolithic_FEMB/Rawdata/results/"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1405_CHK_ADAC0x28_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1405_CHK_ADAC0x28_S16OFF.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1410_CHK_ADAC0x28_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1410_CHK_ADAC0x28_S16OFF.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1410_CHK_ADAC0x20_S16ON.h5"
+#fp = "LN_150pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_GAIN_ADAC0x30_CH4_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1420_CHK_ADAC0x28_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1420_CHK_ADAC0x28_S16OFF.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1430_CHK_ADAC0x28_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1430_CHK_ADAC0x28_S16OFF.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH11_ADAC0x30_S16ON.h5"
 
-def sinc_interp(x, s, u):
-    if len(x) != len(s):
-        raise ValueError('x and s must be the same length')
-    # Find the period    
-    T = s[1] - s[0]
-    sincM = np.tile(u, (len(s), 1)) - np.tile(s[:, np.newaxis], (1, len(u)))
-    y = np.dot(x, np.sinc(sincM/T))
-    return y
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH2345_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH13579bdf_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH1CH4CH9CH12_ADAC0x30_S16ON.h5"
 
-import matplotlib.pyplot as plt
-fig = plt.figure(figsize=(8, 6))
-plt.rcParams.update({'font.size': 18})
 
-#patterns = [pattern05, pattern10,pattern20,pattern30]
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH12_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH4C_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CHIP3_CH4_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH2345_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CHabcd_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH2345abcd_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_noCH7_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH12_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEON_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "LN_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "RT_150pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "LN_150pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "LN_150pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CHIP36CH4_ADAC0x30_S16ON.h5"
+#fp = "LN_150pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_GAIN_ADAC0x30_CH4_S16ON.h5"
+#fp = "LN_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "LN_000pF_BRD01_CDP3_ADCP2SEON_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_ADAC0x30_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_EXT60mV_S16ON.h5"
+#fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_EXT60mV_S16ON_Long.h5"
+##fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH4_EXT60mV_S16ON_Long.h5"
+##fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1420_XTALK_CH4_EXT60mV_S16ON_Long.h5"
+##fp = "LN_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_200BL1420_XTALK_CH4_EXT60mV_S16ON_Long.h5"
+##fp = "LN_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH4_EXT60mV_S16ON_Long.h5"
+##fp = "LN_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH4_EXT60mV_S16ON_Long.h5"
+#fp = "LN_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEON_500pA_900BL1420_XTALK_CH4_EXT30mV_S16ON_Long.h5"
+#fp = "LN_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_900BL1420_XTALK_CH4_EXT30mV_S16ON_Long.h5"
+#fp = "LN_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_900BL1420_XTALK_CH4_EXT30mV_S16ON_Long.h5"
 
-#for abc in range(4):
-for abc in [1]:
-#    pattern  = patterns[abc]
-    fp = pattern + ".h5"
+chipid= 3
+xts_all = []
+for tmpi in range(16):
+    #fp = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH%x_70mV_S16ON.h5"%(tmpi)
+    fp = "RT_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1430_S16ON_xtalk_chip%xch%x.h5"%(chipid, tmpi)
+    #fp = "LN_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_XTALK_CH%x_70mV_S16ON.h5"%(tmpi)
+    #fp = "LN_000pF_BRD01_CDP3_ADCP2DIFF_FEP5DIFF_500pA_200BL1420_XTALK_CH%x_70mV_S16ON.h5"%(tmpi)
+    print (fp)
+    
     
     f = h5py.File(fdir + fp, 'r')
     keys = list(f.keys())
     fembs=[0]
+    import matplotlib.pyplot as plt
+    
+    
+    def sinc_interp(x, s, u):
+        if len(x) != len(s):
+            raise ValueError('x and s must be the same length')
+        # Find the period    
+        T = s[1] - s[0]
+        sincM = np.tile(u, (len(s), 1)) - np.tile(s[:, np.newaxis], (1, len(u)))
+        y = np.dot(x, np.sinc(sincM/T))
+        return y
+    
+    from scipy.ndimage.interpolation import shift
+    from scipy.signal import find_peaks
+    xts = []
+    
+    
+    pps = []
+    pns = []
+    peds = []
+    fig = plt.figure(figsize=(12, 8))
+    plt.rcParams.update({'font.size': 12})
+    period = 1000 
+    chip_inj = chipid 
+    ch_inj = tmpi 
     
     for fembi in fembs:
-        from scipy.signal import find_peaks, peak_widths
-        dlen = 300000
-        rmss = []
-        pks = []
-        peds = []
-        ymax = []
-        for k in range(1):
-            for i in range(16):
-                key="CH{}".format(fembi*128 + 16*k + i)
-                y = f[key][0:dlen]
-                py = np.array(y.astype('int16')) - int(np.mean(y))
-                plocs, _ = find_peaks(py,  height=500)
-                if len(plocs) > 2:
-                    break
-            if len(plocs) < 2: 
-                plocs = np.arange(0, 369*261, 261)
+        #for k in range(8):
+        #for k in range(8):
+        for k in [chip_inj]:
+            for i in [ch_inj]:
+                key="CH{}".format(128*fembi + 16*k + i)
+                y = f[key][0:]
+                y_oft1 = np.where(y[period:period*2] == np.max(y[period:period*2]))[0][0] 
+                y_oft2 = np.where(y[period*2:period*3] == np.max(y[period*2:period*3]))[0][0] 
+                period = y_oft2 - y_oft1 + period
+                y_oft = y_oft1 + period
+                #print (period)
     
-            for i in [1]:
-                key="CH{}".format(fembi*128 + 16*k + i)
-                y = f[key][0:dlen]
-                xlen = plocs[2] - plocs[1] - 10
-                avgm = 10
-                tmp = []
-                for m in range(avgm):
-                    if (m==0):
-                        ay=y[(plocs[1]-50):(plocs[1]+xlen-50)].astype('uint64')
-                        tmp = y[(plocs[1]+50):(plocs[1]+150)].astype('uint64')
+            for i in [ch_inj]:
+                key="CH{}".format(128*fembi + 16*k + i)
+                y = f[key][0:]
+                y_plt_oft = y_oft-50
+                y = y[y_plt_oft:]
+                leny = len(y)
+                avg_n = (leny//period - 10)
+                for a in range(avg_n):
+                    if (a==0):
+                        ay=y[0:period].astype('uint64')
                     else:
-                        ay=ay + y[(plocs[1 + m]-50):(plocs[1+m]+xlen-50)].astype('uint64')
-                        tmp = np.append(tmp, y[(plocs[1+m]+50):(plocs[1+m]+150)].astype('uint64'))
-                peds.append(np.mean(tmp))
-                rmss.append(np.std(tmp))
-                ay = (ay/avgm) - np.mean(tmp)
-                ymax.append(np.max(ay))
-                pks.append(np.max(ay))
-                x = np.arange(xlen)
-                x = np.arange(xlen)
-#                k = 0 
-#                l = 100 
-#                i_p = 100
-#                s = np.arange(k, l)
-#                u = np.linspace(k,l,(l-k)*i_p)
-#                aysinc = sinc_interp(ay[0:100], s, u)
-#                print (len(aysinc))
-#
-                if i%16 ==0: 
-                    plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(abc))
-                    plt.legend()
+                        ay=ay + y[period*a:period*(a+1)].astype('uint64')
+                ay = ay/avg_n
+                pchn = (np.max(ay)) - (np.max(ay[0:20])) 
+    
+            for i in range(16):
+                x = 1 + i
+                plt.subplot(4, 4, x)
+    
+                key="CH{}".format(128*fembi + 16*k + i)
+                y = f[key][0:]
+    
+                y_plt_oft = y_oft-50
+                y = y[y_plt_oft:]
+                leny = len(y)
+                avg_n = (leny//period - 10)
+                #print (avg_n)
+                for a in range(avg_n):
+                    if (a==0):
+                        ay=y[0:period].astype('uint64')
+                    else:
+                        ay=ay + y[period*a:period*(a+1)].astype('uint64')
+                ay = ay/avg_n
+    
+                pltlen =100 
+                ay = ay[50 - (pltlen//2):50+(pltlen//2)]
+                p_max = np.max(ay) - np.mean(ay[0:pltlen//5])
+                n_max = np.mean(ay[0:20]) - np.min(ay)
+                if p_max > n_max:
+                    xt_amp = p_max
                 else:
-                    #plt.plot(x[0:100]*0.5,ay[0:100], marker = '.',  color = "C{}".format(abc))
-                    plt.plot(x[0:100]*0.5,ay[0:100],  marker = '.', label= "ASIC00CH1", color = "C{}".format(abc))
-                    plt.legend()
-            plt.xlabel("Time / $\mu$s")
-            plt.ylabel("Amplitude / bin")
-            plt.title("Averaging Waveforms")
-            plt.grid(True)
-            plt.xlim((15,35))
-            plt.ylim((-100,1500))
-        print (np.mean(ymax), np.std(ymax))
+                    xt_amp = n_max
+                x = np.arange(pltlen)
+                pps.append(np.max(ay))
+                pns.append(np.min(ay))
+                peds.append(int(np.mean(ay[0:20])))
+                
+                plt.plot(x*0.5,ay , marker='.', label="xtalk = %.2f%%"% (xt_amp*100/pchn), color = "C{}".format(i%10))
+                xt = xt_amp/pchn
+                xts.append(xt)
+                plt.legend()
+                plt.grid(True)
+                #plt.ylim((0,4000))
+                plt.ylabel("Output / bin ")
+                plt.xlim((0,(pltlen//2)))
+                plt.xlabel("Time / us ")
+    
+    #            if (i == 0):
+    #                plt.legend()
+    #            plt.tight_layout()
+    #            plt.show()
+    #            plt.close()
+        plt.tight_layout()
+    #    plt.show()
+    #    plt.savefig()
+        plt.savefig(frst + fp[0:-3] + "chip%d_chk_xtalk_wfm.png"%k)
+        plt.close()
+    xts_all.append(xts)
+#print (xts_all)
+
+from matplotlib import cm
+fig, ax = plt.subplots(figsize=(12,8))
+plt.rcParams.update({'font.size': 12})
+#c = ax.pcolor(xts_all, cmap=cm.tab20b, vmin = 0, vmax = 0.02, edgecolors = 'k')
+c = ax.pcolor(xts_all, cmap=cm.YlOrRd, vmin = 0, vmax = 0.02, edgecolors = 'k')
+#c = ax.pcolor(xd, cmap=cm.Paired, vmin = 0, vmax = 0.012, edgecolors = 'k')
+#ax.set_titile ("Crosstalk Distribution")
+ax.set_ylabel ("Channel # with Injected Pulser")
+#ax.set_ylabel ("Crosstalk Distribution")
+ax.set_xlabel ("Crosstalk distribution")
+#cbar = fig.colorbar(c, ticks=[0,0.002, 0.005, 0.008, 0.010, 0.015, 0.02,])
+#cbar = fig.colorbar(c, ticks=[0,0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.010, 0.011, 0.012, 0.013, 0.014, 0.015 ])
+cbar = fig.colorbar(c, ticks=[0,0.002, 0.004, 0.006, 0.008, 0.010, 0.012, 0.014, 0.016, 0.018, 0.02 ])
+#cbar.ax.set_yticklabels(['0 ','0.2%', '0.5%', '0.8%', '1.0%','1.5%', '2.0%'])  # vertically oriented colorbar
+#cbar.ax.set_yticklabels(['0 ','0.1%', '0.2%', '0.3%', '0.4%','0.5%', '0.6%', '0.7%', '0.8%', '0.9%','1.0%','1.1%', '1.2%', '1.3%', '1.4%','1.5%'])  # vertically oriented colorbar
+cbar.ax.set_yticklabels(['0 ','0.2%', '0.4%', '0.6%', '0.8%','1.0%', '1.2%', '1.4%', '1.6%', '1.8%', '2.0%'])
+cbar.ax.set_ylabel( "Crosstalk / Injection Pulser (Peak-to-Peak Amplitude)")  # vertically oriented colorbar
 plt.tight_layout()
+for y in range(16):
+    for x in range(16):
+        if xts_all[y][x] > 0.9:
+            pass
+        else:
+            ax.text(x+0.2, y+0.3,"%.2f"%(xts_all[y][x]*100), color='b', fontsize=8) 
 #plt.show()
-plt.savefig(frst+fp[0:-3] + "wfm_avg_gains.png")
+#plt.savefig(xtalk_f[0:-4] + ".png", format = "png")
+plt.savefig(frst + fp[0:-3] + "chip%d_chk_xtalk_2d.png"%k)
 plt.close()
 
-
-
-
-
-#for fembi in fembs:
-#    fig = plt.figure(figsize=(16, 12))
+#    exit()
+#    
+#    fig = plt.figure(figsize=(12, 8))
 #    plt.rcParams.update({'font.size': 16})
-#    for k in range(8):
-#        x = 420 + k+1
-#        plt.subplot(x)
-#        for i in range(16):
-#            key="CH{}".format(128*fembi + 16*k + i)
-#            dlen = 4000
-#            x = np.arange(dlen)
-#            y = f[key][0:dlen]
-#            ymaxpos = np.where(y[500:3500] == np.max(y[500:3500]))[0][0] + 500
-##            plt.plot(x,y, label=key, color = "C{}".format(k))
-#            plt.plot(x[0:100]*0.5,y[ymaxpos-50:ymaxpos+50] ,label=key, color = "C{}".format(i%10))
-##            plt.ylim((0,4000)) 
-#            plt.xlim((0,50)) 
-#            plt.grid(True)
-#            plt.xlabel("Time / $\mu$s")
-#            plt.ylabel("Amplitude / bin")
-#
-#            plt.title("Waveform: CH{} to CH{}".format(k*16, (k+1)*16-1))
-##            plt.ylim((np.mean(y)-10,(np.mean(y)+10))) 
-#    #        plt.draw()
-#    #        plt.legend()
-#    #        plt.pause(0.5)
+#    x = np.arange(128)
+#    plt.plot(x, peds, marker = '.', label="Pedestal")
+#    plt.legend()
+#    plt.plot(x, pps, marker = '.', label="Pos Peak")
+#    plt.legend()
+#    plt.plot(x, pns, marker = '.', label="Neg Peak")
+#    plt.legend()
+#    plt.xlabel("Channel #")
+#    plt.ylabel("ADC output / bin")
+#    plt.ylim((-100,5000))
+#    plt.xlim((-5,130))
+#    #plt.grid(True)
+#    for i in range(8):
+#        plt.vlines(i*16-0.5, 0, 5000, color = 'c')
 #    plt.tight_layout()
-##    plt.show()
-#    plt.savefig(frst+fp[0:-3] + "wfm.png")
+#    plt.show()
+#    #plt.savefig(frst + fp[0:-3] + "chk_pls_ppn.png")
 #    plt.close()
+#    
+#    fig = plt.figure(figsize=(12, 8))
+#    plt.rcParams.update({'font.size': 16})
+#    x = np.arange(128)
+#    plt.plot(x, np.array(pps)-np.array(peds), marker = '.', label="Pos PLS Amp")
+#    plt.legend()
+#    plt.xlabel("Channel #")
+#    plt.ylabel("ADC output / bin")
+#    plt.ylim((-100,5000))
+#    plt.xlim((-5,130))
+#    #plt.grid(True)
+#    for i in range(8):
+#        plt.vlines(i*16-0.5, 0, 5000, color = 'c')
+#    plt.tight_layout()
+#    plt.show()
+#    #plt.savefig(frst + fp[0:-3] + "chk_pls_amp.png")
+#    plt.close()
+
 #
 #for fembi in fembs:
 #    fig = plt.figure(figsize=(16, 12))
@@ -165,27 +278,16 @@ plt.close()
 #
 #    for k in range(8):
 #        x = 420 + k+1
-#        plt.subplot(x)
+#        #plt.subplot(x)
+#        plt.subplot(421)
 #        for i in range(16):
 #            key="CH{}".format(fembi*128 + 16*k + i)
 #            y = f[key][0:dlen]
 #            #plocs = detect_peaks(y, mph=None, mpd=50, threshold=500, edge='rising')
-#            py = np.array(y.astype('int16')) - int(np.mean(y))
-#            plocs, _ = find_peaks(py,  height=300)
-#            if len(plocs) > 2:
-#                break
-#        print (plocs)
-#        if len(plocs) < 2: 
-#            plocs = np.arange(0, 369*261, 261)
-#
-#        for i in range(16):
-#            key="CH{}".format(fembi*128 + 16*k + i)
-#            y = f[key][0:dlen]
-#            #plocs = detect_peaks(y, mph=None, mpd=50, threshold=500, edge='rising')
-#            #py = np.array(y.astype('int16')) - int(np.mean(y))
-#            #plocs, _ = find_peaks(py,  height=100)
+#            plocs, _ = find_peaks(y,  height=500)
+#    
 #            xlen = plocs[2] - plocs[1] - 10
-#            avgm = 10
+#            avgm = 100
 #            tmp = []
 #            for m in range(avgm):
 #                if (m==0):
@@ -196,26 +298,27 @@ plt.close()
 #                    tmp = np.append(tmp, y[(plocs[1+m]+50):(plocs[1+m]+150)].astype('uint64'))
 #            peds.append(np.mean(tmp))
 #            rmss.append(np.std(tmp))
+#            #ay = (ay/avgm) - np.mean(tmp)
 #            ay = (ay/avgm) 
 #            ymax.append(np.max(ay))
 #            pks.append(np.max(ay))
 #            x = np.arange(xlen)
-#            if i%16 ==0: 
-#                plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(k))
-#                plt.legend()
-#            else:
-#                plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
-#            #plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
-#        plt.xlabel("Time / $\mu$s")
+#            #if i%16 ==0: 
+#            #    plt.plot(x[0:100]*0.5,ay[0:100], label= "ASIC#%d"%k, color = "C{}".format(k))
+#            #    plt.legend()
+#            #else:
+#            #    plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
+#            plt.plot(x[0:100]*0.5,ay[0:100],  color = "C{}".format(k))
+#        plt.xlabel("Time / us")
 #        plt.ylabel("Amplitude / bin")
-#        plt.title("Averaging Waveforms")
-#        plt.grid(True)
-#        plt.xlim((0,50))
-#    print (np.mean(ymax), np.std(ymax))
-##    plt.ylim((-1000,1000))
+##    print (np.mean(ymax), np.std(ymax))
+##    fig.suptitle("Response to Calibration Pulser")
+#    plt.xlim((0,50))
+#    plt.ylim((-1000,1000))
+#    plt.grid()
 #    plt.tight_layout()
-#    #plt.show()
-#    plt.savefig(frst+fp[0:-3] + "wfm_avg.png")
+#    plt.show()
+##    plt.savefig("abc.png")
 #    plt.close()
 #
 #    import pickle
@@ -229,9 +332,6 @@ plt.close()
 #    chnnos = np.arange(128)
 #    plt.plot(chnnos, ymax, marker = '.', color ='r', label = "Pulse Amplitude")
 #    plt.plot(chnnos, peds, marker = '.', color ='b', label = "Pedestal")
-#    for i in range(8):
-#        plt.vlines(i*16-0.5,0, 4100, linestyles="dashed", colors='g')
-#
 #    plt.xlim((-1,129))
 #    plt.ylim((0,4100))
 #    plt.ylabel("ADC output / bin")
@@ -240,38 +340,11 @@ plt.close()
 #    plt.legend()
 #
 #    plt.tight_layout()
-#    plt.savefig(frst+fp[0:-3] + "pls_ped_dis.png")
+#    plt.show()
 #    plt.close()
 #
 #    fig = plt.figure(figsize=(12, 8))
 #    plt.rcParams.update({'font.size': 24})
-#
-#
-#
-#    fig = plt.figure(figsize=(12, 8))
-#    plt.rcParams.update({'font.size': 24})
-#    ax1 = fig.add_subplot(111)
-#    ax1.plot(np.arange(len(rmss)), rmss, marker = '.', color ='r', label = "RMS noise / bin")
-#    #ax1.plot(np.arange(len(rmss)), np.array(rmss)*200, marker = '.', color ='r', label = "LN2, Cd=150pF, ENC=(%d +/- %d) e-"%(np.mean(np.array(rmss)*200), np.std(np.array(rmss)*200)))
-#    #import pickle
-#    #fsp =fdir + "femb_%d_rms.bin"%fembi
-#    #with open(fsp, 'wb') as fn:
-#    #    pickle.dump(rmss, fn)
-#    #ax1.set_ylim((0,2000))
-#    for i in range(8):
-#        plt.vlines(i*16-0.5,0, int(np.max(rmss))+2, linestyles="dashed", colors='g')
-#    plt.ylabel("ADC counts / bin")
-#    plt.legend()
-#    plt.legend()
-#    plt.xlabel("Channel number")
-#    plt.grid(axis='both')
-#    plt.tight_layout()
-#    #plt.show()
-#    plt.savefig(frst+fp[0:-3] + "pls_rms_dis.png")
-#    plt.close()
-#
-#    exit()
-#
 ##    plt.subplot(311)
 ##    plt.plot(np.arange(len(peds)), peds, marker = '.', color ='b', label = "Pedestal / bin")
 ##    plt.ylim((0,4100))

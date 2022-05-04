@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description:
 Created Time: 7/15/2016 11:47:39 AM
-Last modified: 7/5/2021 2:09:29 PM
+Last modified: 7/5/2021 2:11:48 PM
 """
 
 #defaut setting for scientific caculation
@@ -26,8 +26,8 @@ import h5py
 
 
 fdir = "D:/Monolithic_FEMB/Rawdata/"
-frst = "D:/Monolithic_FEMB/Results/"
-pattern = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_Gain_ADAC0x08.h5"
+frst = "D:/Monolithic_FEMB/Rawdata/Results/"
+pattern = "RT_000pF_BRD01_CDP3_ADCP2SEOFF_FEP5SEOFF_500pA_200BL1420_Gain_ADAC0x08"
 
 def sinc_interp(x, s, u):
     if len(x) != len(s):

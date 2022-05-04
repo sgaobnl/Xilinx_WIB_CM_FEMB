@@ -175,12 +175,17 @@ class RIGOL_PS_CTL:
 
     #__INIT__#
     def __init__(self):
-        self.ADDR = u'USB0::0x1AB1::0x0E11::DP8B174901006::0::INSTR'
+        #self.ADDR = u'USB0::0x1AB1::0x0E11::DP8B174901006::0::INSTR'
+        self.ADDR = u'USB0::0x1AB1::0x0E11::DP8B174901006::INSTR'
         self.gen = None
         
 ps = RIGOL_PS_CTL()
 ps.ps_init()
 if ps.get_on_off(channel=1) :
     print ("CH1 is ON")
-#ps.set_channel(channel=1, voltage=29)
-
+ps.off(channels = [1])
+time.sleep(5)
+ps.on(channels = [1])
+time.sleep(5)
+tmp = ps.measure_params(channel=1)
+print (tmp)
