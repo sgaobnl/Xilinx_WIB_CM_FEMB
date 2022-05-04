@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 4/28/2022 11:40:00 AM
+Last modified: 5/4/2022 5:02:42 PM
 """
 
 from tcp import TCPSocket
@@ -385,9 +385,9 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
 
     def femb_pwr_set (self,femb=0, pwr_on=1, v_fe=3.0, v_adc=3.5, v_cd=2.8 ):
         self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x0, data=int(v_fe/1e-7) )
-        self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x1, data=int(0/1e-7) )
+        self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x3, data=int(0/1e-7) )
         self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x2, data=int(v_adc/1e-7) )
-        self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x3, data=int(v_cd/1e-7) )
+        self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x1, data=int(v_cd/1e-7) )
         self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x4, data=int(0/1e-7) )
         self.tcp_cmd_io(cmd=0x0E, aux=femb, addr=0x5, data=int(0/1e-7) )
         if pwr_on != 0:
@@ -426,59 +426,7 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
                     v_s =v_s+ v_info
         c_info = c_s/avg_n
         v_info = v_s/avg_n
-        return (v_info[0], c_info[0]), (v_info[2], c_info[2]), (v_info[3], c_info[3]), (v_info[6], c_info[6])
 
-
-
-#a = TCP_CFG ()
-#a.femb_adc_mon_cs(femb_no=0, adc_no=1)
-#a.femb_adc_mon_cs(femb_no=0, adc_no=1)
-#a.set_fe_board(snc=0, swdac=0, dac=0x00)
-#a.set_fechip(chip=2, snc=1)
-#a.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=0, mon_type=0, mon_chip=2, mon_chipchn=2, avg_n=50)
-#a.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=2, mon_chip=0, mon_chipchn=0, avg_n=50)
-#a.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=2, mon_chip=0, mon_chipchn=0, avg_n=50)
-#a.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=2, mon_chip=0, mon_chipchn=0, avg_n=50)
-#a.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=2, mon_chip=0, mon_chipchn=0, avg_n=50)
-#a.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=2, mon_chip=0, mon_chipchn=0, avg_n=50)
-#print (a.wib_mon_adc_read())
-#a.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=1, mon_chip=0, mon_chipchn=0, avg_n=10)
-#a.set_fechip(chip=1, snc=1)
-#a.set_fechip(chip=3, snc=1)
-#a.fe_spi_prog()
-
-#a.femb_pwr_set (femb=0, pwr_on=1, v_fe=3.0, v_adc=3.5, v_cd=2.8 )
-#print (a.femb_pwr_rd())
-
-#a.set_fe_board(snc=0, swdac=0, dac=0x20)
-#a.set_fechn_reg(chip=0,chn=0, snc=1, smn=0, sdf=1)
-##a.set_fechip(chip=1, snc=1)
-#a.fe_spi_prog()
-#a.fc_act_cal()
-#a.fc_act_cal()
-
-#import numpy as np
-#c = []
-#for j in range(10):
-#    for i in range(100):
-#        tmp = a.adc_read()
-#        c.append(a.adc_read()[0])
-#    print (np.average(c), j*10+i)
-#    time.sleep(1)
-#a.femb_cfg()
-#a.cd_fe_cali()
-#a.femb_cfg()
-#print (a.host)
-#print (a.regs_int8)
-#a.set_fe_board()
-#a.fc_act_cal()
-#a.wib_ww(addr=0, data=0x1)
-#a.fe_spi_prog()
-#a.wib_ww(addr=0, data=0x0)
-#a.wib_ww(addr=0, data=0x1)
-#a.wib_ww(addr=0, data=0x0)
-#a.wib_ww(addr=0, data=0x0)
-#a.cd_fc_rst()
-#a.cd_fc_act()
+        return (v_info[0], c_info[0]), (v_info[2], c_info[2]), (v_info[1], c_info[1]), (v_info[6], c_info[6])
 
 

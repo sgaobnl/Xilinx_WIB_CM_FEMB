@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 4/29/2022 3:30:42 PM
+Last modified: 5/4/2022 4:53:18 PM
 """
 
 import numpy as np
@@ -242,16 +242,18 @@ def FEMB_PLOT(chn_rmss,chn_peds, chn_pkps, chn_pkns, chn_onewfs, chn_avgwfs, sav
 
 def FEMB_CHKOUT_Input(rootdir):
     print ("Connect FEMB to WIB Slot0")
-    #tester = input ("please input your name: ")
-    tester = "SG"
+    tester = input ("please input your name: ")
+    #tester = "SG"
     femb_sn = int(input ("please input FEMB SN (000-999): "))
 #    femb_batch = int(input ("please input FEMB Assembly Batch (00-99): "))
-    env_cs = input("Test is performed at cold(LN2) (Y/N)? :")
+#    env_cs = input("Test is performed at cold(LN2) (Y/N)? :")
+    env_cs = "n"
     if ("Y" in env_cs) or ("y" in env_cs):
         env = "LN"
     else:
         env = "RT"
-    ToyTPC_en = input("ToyTPC at FE inputs (Y/N) : ")
+#    ToyTPC_en = input("ToyTPC at FE inputs (Y/N) : ")
+    ToyTPC_en = "n"
     note = input("A short note (<80 letters):")
     if ("Y" in ToyTPC_en) or ("y" in ToyTPC_en):
         ToyTPC = "150pF"
