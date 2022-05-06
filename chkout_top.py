@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/6/2022 10:46:58 AM
+Last modified: 5/6/2022 11:49:02 AM
 """
 
 import numpy as np
@@ -162,8 +162,8 @@ def data_ana(femb_data):
 
     for chipi in range(8):
         plsn = (len(femb_data[chipi][0])//500)-10
-        if plsn > 100:
-            psln = 100
+        if plsn > 300:
+            psln = 300
 
         for i in range(plsn):
             if i == 0:
@@ -231,8 +231,8 @@ def FEMB_PLOT(chn_rmss,chn_peds, chn_pkps, chn_pkns, chn_onewfs, chn_avgwfs, sav
         x = (np.arange(ts)) * 0.5
         y3 = chn_onewfs[chni][25:ts+25]
         y4 = chn_avgwfs[chni][25:ts+25]
-        FEMB_SUB_PLOT(ax3, x, y3, title="Waveform Overlap", xlabel="Time / $\mu$s", ylabel="ADC /bin", color='C%d'%(chni%9))
-        FEMB_SUB_PLOT(ax4, x, y4, title="Averaging(100 Cycles) Waveform Overlap", xlabel="Time / $\mu$s", ylabel="ADC /bin", color='C%d'%(chni%9))
+        FEMB_SUB_PLOT(ax3, x, y3, title="Waveform Overlap (1 cycle)", xlabel="Time / $\mu$s", ylabel="ADC /bin", color='C%d'%(chni%9))
+        FEMB_SUB_PLOT(ax4, x, y4, title="Averaging(300 Cycles) Waveform Overlap", xlabel="Time / $\mu$s", ylabel="ADC /bin", color='C%d'%(chni%9))
                 
     plt.tight_layout( rect=[0.05, 0.05, 0.95, 0.95])
     fn = save_dir + "response.png"
@@ -423,7 +423,9 @@ time.sleep(2)
 tcp.set_fe_board(sts=0,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=0,dac=0x0)
 tcp.femb_cfg()
 time.sleep(2)
-pwr_info = tcp.femb_pwr_rd(femb=femb)
+for i in range(5):
+    pwr_info = tcp.femb_pwr_rd(femb=femb)
+    time.sleep(.2)
 pwr_info = tcp.femb_pwr_rd(femb=femb)
 time.sleep(1)
 pwr_info = tcp.femb_pwr_rd(femb=femb)
@@ -462,7 +464,7 @@ for asic in [0]:
     result_dict["Mon_LArASIC{:02d}_BGR".format(asic)] = tmp
     tmp = tcp.femb_fe_mon_cs(femb_no=femb, ext_lemo=0, rst_fe=1, mon_type=1, mon_chip = asic)
     result_dict["Mon_LArASIC{:02d}_Temperature".format(asic)] = tmp
-    print (result_dict["ADC{:02d}_MeasRef".format(asic)]) 
+#    print (result_dict["ADC{:02d}_MeasRef".format(asic)]) 
     
 
 print ("Start FEMB configuration: 14mV/fC, 900mV BL, 2.0us, single-ended, 500pA, ASICDAC=0x10, Cali_enable, SDC off")
@@ -512,7 +514,7 @@ while True:
         #    if "RMS" in strin:
         #        val = 20000
         #    else:
-            val = 2000
+            val = 5000
             data = udp.get_rawdata_packets(val=val)
             chip_data = conv.raw_conv_feedloc(data)
             if chip_data != None:
