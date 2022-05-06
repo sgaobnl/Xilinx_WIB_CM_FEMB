@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 5/4/2022 5:02:42 PM
+Last modified: 5/5/2022 1:08:46 PM
 """
 
 from tcp import TCPSocket
@@ -72,6 +72,8 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
         self.femb_wr_chk (c_id=2, c_page=0, c_addr = 0x3, c_data = 0x3c)
 
     def cd_lvds_current (self ):
+        self.femb_cd_wr(c_id=3, c_page=0, c_addr=0x11, c_data=0x07)
+        self.femb_cd_wr(c_id=2, c_page=0, c_addr=0x11, c_data=0x07)
         self.femb_wr_chk (c_id=3, c_page=0, c_addr = 0x11, c_data = 0x07)
         self.femb_wr_chk (c_id=2, c_page=0, c_addr = 0x11, c_data = 0x07)
 
@@ -232,10 +234,7 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
         return mon_mean, mon_std
 
     def femb_fedac_mon_cs(self, femb_no=0, ext_lemo=0, rst_fe=0, mon_chip=0, sgp=False, sg0=0, sg1=0,  vdac=0x20, avg_n=50 ):
-        if femb_no == 0:
-            self.link_cs = 0
-        else:
-            self.link_cs = 1 << femb_no 
+        self.link_cs = 2*femb_no
 
         if (rst_fe != 0):
             self.set_fe_reset()
@@ -272,10 +271,7 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
 #            return vmon
 
     def femb_fe_mon_cs(self, femb_no=0, ext_lemo=0, rst_fe=0, mon_type=2, mon_chip=0, mon_chipchn=0, snc=0,sg0=0, sg1=0, avg_n=50 ):
-        if femb_no == 0:
-            self.link_cs = 0
-        else:
-            self.link_cs = 1 << femb_no 
+        self.link_cs = 2*femb_no
 
         if (rst_fe != 0):
             self.set_fe_reset()
@@ -316,10 +312,7 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
             return vmon 
             
     def femb_adc_mon_cs(self, femb_no=0, ext_lemo=0,adc_no=0, avg_n=10):
-        if femb_no == 0:
-            self.link_cs = 0
-        else:
-            self.link_cs = 1 << femb_no 
+        self.link_cs = 2*femb_no
 
         adcs_addr=[0x08,0x09,0x0A,0x0B,0x04,0x05,0x06,0x07]  
         cd2_iobit432 = [6,4,5,7,3,1,0,2]

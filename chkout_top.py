@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/4/2022 4:53:18 PM
+Last modified: 5/6/2022 10:46:58 AM
 """
 
 import numpy as np
@@ -241,7 +241,7 @@ def FEMB_PLOT(chn_rmss,chn_peds, chn_pkps, chn_pkns, chn_onewfs, chn_avgwfs, sav
     return fn
 
 def FEMB_CHKOUT_Input(rootdir):
-    print ("Connect FEMB to WIB Slot0")
+#    print ("Connect FEMB to WIB Slot0")
     tester = input ("please input your name: ")
     #tester = "SG"
     femb_sn = int(input ("please input FEMB SN (000-999): "))
@@ -386,6 +386,15 @@ result_dict["WIB_UDP_FW_ver"] = udpver
 
 
 femb=0
+if femb == 0:
+    tcp.link_cs = 0
+elif femb == 1:
+    tcp.link_cs = 2
+elif femb == 2:
+    tcp.link_cs = 4
+elif femb == 3:
+    tcp.link_cs = 6
+
 femb_sn, env, toytpc, save_dir, tester, note = FEMB_CHKOUT_Input(rootdir)
 result_dict["FEMB_SN"] = femb_sn
 result_dict["Env"] = env 
@@ -396,7 +405,7 @@ result_dict["Note"] = note
 
 ################################################################################################
 ##power consumption
-print ("Turn on FEMB on WIB slot0")
+print ("Turn on FEMB on WIB slot {}".format(femb))
 v_fe=3.0
 v_adc=3.5
 v_cd=2.8
@@ -446,12 +455,12 @@ tcp.femb_cfg()
 #for asic in range(8):
 for asic in [0]:
     print ("Measure ASIC {}".format(asic))
-    tmp = tcp.femb_adc_mon_cs(femb_no=0, adc_no=asic)
+    tmp = tcp.femb_adc_mon_cs(femb_no=femb, adc_no=asic)
     result_dict["ADC{:02d}_SetRef".format(asic)] = tmp[1]
     result_dict["ADC{:02d}_MeasRef".format(asic)] = tmp[0]
-    tmp = tcp.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=2, mon_chip = asic)
+    tmp = tcp.femb_fe_mon_cs(femb_no=femb, ext_lemo=0, rst_fe=1, mon_type=2, mon_chip = asic)
     result_dict["Mon_LArASIC{:02d}_BGR".format(asic)] = tmp
-    tmp = tcp.femb_fe_mon_cs(femb_no=0, ext_lemo=0, rst_fe=1, mon_type=1, mon_chip = asic)
+    tmp = tcp.femb_fe_mon_cs(femb_no=femb, ext_lemo=0, rst_fe=1, mon_type=1, mon_chip = asic)
     result_dict["Mon_LArASIC{:02d}_Temperature".format(asic)] = tmp
     print (result_dict["ADC{:02d}_MeasRef".format(asic)]) 
     
