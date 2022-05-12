@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 4/29/2022 2:49:38 PM
+Last modified: 5/12/2022 1:16:36 PM
 """
 
 import numpy as np
@@ -37,15 +37,16 @@ class QC_runs( ):
         self.logs = {}
         self.root = "D:/IO_1826_1B/QC/"
         self.save_dir = None
+        self.fembs_on_wib = []
 
     def FEMB_CHKOUT_Input(self):
         print ("Check WIB status")
+        self.fembs_on_wib = []
         hw_ver, fw_ver = self.tcp.wib_ver()
         print ("WIB HW Versiont = 0x{:04x}, SW Versiont = 0x{:04x}".format(hw_ver, fw_ver))
         
-        print ("Connect FEMB to WIB Slot0")
         tester = input ("please input your name: ")
-        femb_sn = int(input ("please input FEMB SN (000-999): "))
+        #wib_slot = int( input("FEMB on WIB slot (0-3) : ") )
         env_cs = input("Test is performed at cold(LN2) (Y/N)? :")
         if ("Y" in env_cs) or ("y" in env_cs):
             env = "LN"
@@ -57,41 +58,73 @@ class QC_runs( ):
             toytpc = "150pF"
         else:
             toytpc = "0pF"
-        save_dir = self.root + "FEMB{:03d}_{}_{}/".format(femb_sn, env, toytpc)
-        if (os.path.exists(save_dir)):
-            print ("Folder exist, please check the entering infomation...")
-            #exit_en = input("Exit and Restart(Y/N)? : ")
-            exit_en = "n"
-            if ("Y" in exit_en) or ("y" in exit_en):
-                exit()
-            else:
-                i = 0
-                while (True):
-                    i = i + 1
-                    fd_new = save_dir[:-1]+"_R{:03d}/".format(i)
-                    if (os.path.exists(fd_new)):
-                        pass
-                    else:
-                        try:
-                            os.makedirs(fd_new)
-                        except OSError:
-                            print ("Error to create folder %s"%fd_new)
-                            sys.exit()    
-                        save_dir = fd_new
+
+        for femb_no in range(4):
+            wib_slot_flg = input("Is a FEMB on WIB slot {} (Y/N)? :".format(femb_no))
+            bypass_flg =False
+            while True:
+                if ("Y" in wib_slot_flg) or ("y" in wib_slot_flg):
+                    break
+                else:
+                    wib_slot_flg = input("Are you sure (Y/N)? :")
+                    if ("Y" in wib_slot_flg) or ("y" in wib_slot_flg):
+                        bypass_flg =True
                         break
-        else:
-            try:
-                os.makedirs(save_dir)
-            except OSError:
-                print ("Error to create folder %s"%save_dir)
-                sys.exit()    
-        self.logs["FEMB_SN"] = femb_sn
-        self.logs["Env"] = env 
-        self.logs["Cd"] = toytpc 
-        self.logs["Tester"] =  tester
-        self.logs["Note"] = note 
-        self.save_dir = save_dir
-        self.logs["save_dir"]  = self.save_dir
+                    else:
+                        wib_slot_flg = input("Is a FEMB on WIB slot {} (Y/N)? :".format(femb_no))
+            if bypass_flg:
+                continue
+                    
+            if ("Y" in wib_slot_flg) or ("y" in wib_slot_flg):
+                self.fembs_on_wib.append(femb_no)
+                femb_sn = int(input ("please input FEMB SN (000-999): "))
+                save_dir = self.root + "FEMB{:03d}_{}_{}/".format(femb_sn, env, toytpc)
+                if (os.path.exists(save_dir)):
+                    print ("Folder exist, please check the entering infomation...")
+                    #exit_en = input("Exit and Restart(Y/N)? : ")
+                    exit_en = "n"
+                    if ("Y" in exit_en) or ("y" in exit_en):
+                        exit()
+                    else:
+                        i = 0
+                        while (True):
+                            i = i + 1
+                            fd_new = save_dir[:-1]+"_R{:03d}/".format(i)
+                            if (os.path.exists(fd_new)):
+                                pass
+                            else:
+                                try:
+                                    os.makedirs(fd_new)
+                                except OSError:
+                                    print ("Error to create folder %s"%fd_new)
+                                    sys.exit()    
+                                save_dir = fd_new
+                                break
+                else:
+                    try:
+                        os.makedirs(save_dir)
+                    except OSError:
+                        print ("Error to create folder %s"%save_dir)
+                        sys.exit()    
+                self.logs["FEMB_SN"] = femb_sn
+                self.logs["Env"] = env 
+                self.logs["Cd"] = toytpc 
+                self.logs["Tester"] =  tester
+#                self.logs["WIB_slot"] = femb_no 
+                self.logs["Note"] = note 
+                self.save_dir = save_dir
+                self.logs["save_dir"]  = self.save_dir
+                self.logs["WIB_slot"] = femb_no 
+                with open("./logs_dir_femb{}.txt".format(femb_no), 'w') as fp:
+                    fp.write(self.save_dir + "logs_tm{:03d}.bin".format(1))
+       
+                with open(self.save_dir + "logs_tm{:03d}.bin".format(1), 'wb') as fp:
+                    pickle.dump(self.logs, fp)
+
+            else:
+                pass
+        with open("./fembs_on_wib.bin", 'wb') as fp:
+            pickle.dump(self.fembs_on_wib, fp)
 
 
     def pwr_info_print(self, pwr_info):
@@ -280,6 +313,7 @@ class QC_runs( ):
         self.tcp.femb_cfg()
 
         adc_dft_paras = copy.deepcopy(self.tcp.adcs_paras)
+
         print ("ADC reference calibration...")
         for vref in range (0x1f, 0x100, 0x40):
             for chipi in range(8):
@@ -524,108 +558,109 @@ class QC_runs( ):
 
         hdf_dir = self.create_folder(sub_folder = "CHK")
 
-        #log = "Check LArASIC response with single-ended interface between FE and ADC"
-        #print (log)
-        #femb_data = False
-        #while femb_data == False:
-        #    self.logs["CHK_response_SE"] = log
-        #    self.tcp.set_fe_reset()
-        #    self.tcp.set_fe_board(sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10)
-        #    self.logs["CHK_response_SE_FE_CFG"] = "sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10"
-        #    self.tcp.femb_cfg()
-        #    self.tcp.cd_fe_cali()
-        #    self.tcp.fc_act_cal() #enalbe LArASIC calibration
-        #    fp = hdf_dir + "CHK_response_SE.h5"
-        #    femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
-
-        #log = "Check LArASIC response with Differential interface between FE and ADC"
-        #print (log)
-        #femb_data = False
-        #while femb_data == False:
-        #    self.logs["CHK_response_DIFF"] = log
-        #    self.tcp.set_fe_reset()
-        #    self.tcp.set_fe_board(sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, sdd=1)
-        #    self.logs["CHK_response_DIFF_FE_CFG"] = "sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, sdd=1"
-        #    for i in range(8):
-        #        self.tcp.adcs_paras[i][1] = 1
-        #    self.tcp.femb_cfg()
-        #    self.tcp.cd_fe_cali()
-        #    self.tcp.fc_act_cal() #enalbe LArASIC calibration
-        #    fp = hdf_dir + "CHK_response_DIFF.h5"
-        #    time.sleep(0.5)
-        #    femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
-        #    for i in range(8):
-        #        self.tcp.adcs_paras[i][1] = 0
-
-        #lkc = ["500pA", "100pA", "5nA",  "1nA"]
-        #for i in range(4):
-        #    log = "Check LArASIC response, FE with " + lkc[i]
-        #    print (log)
-        #    femb_data = False
-        #    while femb_data == False:
-        #        self.logs["CHK_response_SE_"+lkc[i]] = log
-        #        slk0 = i%2
-        #        slk1 = i//2
-        #        self.tcp.set_fe_reset()
-        #        self.tcp.set_fe_board(sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, slk0=slk0, slk1=slk1)
-        #        self.logs["CHK_response_SE_FE_CFG_"+lkc[i]] = "sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, slk0={}, slk1={}".format(slk0, slk1)
-        #        self.tcp.femb_cfg()
-        #        self.tcp.cd_fe_cali()
-        #        self.tcp.fc_act_cal() #enalbe LArASIC calibration
-        #        fp = hdf_dir + "CHK_response_SE_{}.h5".format(lkc[i])
-        #        if i >= 2:
-        #            femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True, ana_chk=False ) 
-        #        else:
-        #            femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True, ana_chk=True ) 
-
-        #sncs = ["900mVBL", "200mVBL"]
-        #sgs = ["14_0mVfC", "25_0mVfC", "7_8mVfC", "4_7mVfC" ]
-        #sts = ["1_0us", "0_5us",  "3_0us", "2_0us"]
-        #for i in range(2):
-        #    snc = i
-        #    for j in range(4):
-        #        sg0 = j%2
-        #        sg1 = j//2
-        #        for k in range(4):
-        #            st0 = k%2
-        #            st1 = k//2
-        #            log = "Check LArASIC response, FE with {}_{}_{}".format(sncs[i], sgs[j], sts[k])
-        #            print (log)
-        #            femb_data = False
-        #            while femb_data == False:
-        #                self.logs["CHK_response_SE_{}_{}_{}".format(sncs[i], sgs[j], sts[k])] = log
-        #                self.tcp.set_fe_reset()
-        #                self.tcp.set_fe_board(sts=1,snc=snc,sg0=sg0,sg1=sg1,st0=st0,st1=st1,swdac=1,dac=0x10)
-        #                self.logs["CHK_response_SE_FE_CFG__{}_{}_{}".format(sncs[i],sgs[j],sts[k])] = "sts=1,snc={},sg0={},sg1={},st0={},st1={},swdac=1,dac=0x10".format(snc, sg0, sg1, st0, st1)
-        #                self.tcp.femb_cfg()
-        #                self.tcp.cd_fe_cali()
-        #                self.tcp.fc_act_cal() #enalbe LArASIC calibration
-        #                fp = hdf_dir + "CHK_response_SE_{}_{}_{}.h5".format(sncs[i], sgs[j], sts[k])
-        #                femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
-
-        log = "Check LArASIC response with 2-bit DAC and pulse from WIB"
+        log = "Check LArASIC response with single-ended interface between FE and ADC"
         print (log)
         femb_data = False
         while femb_data == False:
-            self.logs["CHK_2bitDAC_WIBPLS"] = log
+            self.logs["CHK_response_SE"] = log
             self.tcp.set_fe_reset()
-            self.tcp.set_fe_board(sts=1,snc=1,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00)
-            self.logs["CHK_2bitDAC_WIBPLS"] = "sts=1,snc=0,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00"
-            self.gen.gen_chn_sw(chn=1, SW="ON")
+            self.tcp.set_fe_board(sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10)
+            self.logs["CHK_response_SE_FE_CFG"] = "sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10"
             self.tcp.femb_cfg()
-            self.tcp.wib_cntl_cs(lemo_en = True)
-            self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x27, c_data=0x1f)
-            self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x27, c_data=0x1f)
-            self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x3) 
-            self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0)
-            time.sleep(2)
-            fp = hdf_dir + "CHK_2bitDAC_WIBPLS.h5"
+            self.tcp.cd_fe_cali()
+            self.tcp.fc_act_cal() #enalbe LArASIC calibration
+            fp = hdf_dir + "CHK_response_SE.h5"
             femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
-            self.tcp.wib_cntl_cs(lemo_en = False)
-            self.gen.gen_chn_sw(chn=1, SW="OFF")
-            self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x2)
-            self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0x0)
-            time.sleep(1)
+
+        log = "Check LArASIC response with Differential interface between FE and ADC"
+        print (log)
+        femb_data = False
+        while femb_data == False:
+            self.logs["CHK_response_DIFF"] = log
+            self.tcp.set_fe_reset()
+            self.tcp.set_fe_board(sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, sdd=1)
+            self.logs["CHK_response_DIFF_FE_CFG"] = "sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, sdd=1"
+            for i in range(8):
+                self.tcp.adcs_paras[i][1] = 1
+            self.tcp.femb_cfg()
+            self.tcp.cd_fe_cali()
+            self.tcp.fc_act_cal() #enalbe LArASIC calibration
+            fp = hdf_dir + "CHK_response_DIFF.h5"
+            time.sleep(0.5)
+            femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
+            for i in range(8):
+                self.tcp.adcs_paras[i][1] = 0
+
+        lkc = ["500pA", "100pA", "5nA",  "1nA"]
+        for i in range(4):
+            log = "Check LArASIC response, FE with " + lkc[i]
+            print (log)
+            femb_data = False
+            while femb_data == False:
+                self.logs["CHK_response_SE_"+lkc[i]] = log
+                slk0 = i%2
+                slk1 = i//2
+                self.tcp.set_fe_reset()
+                self.tcp.set_fe_board(sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, slk0=slk0, slk1=slk1)
+                self.logs["CHK_response_SE_FE_CFG_"+lkc[i]] = "sts=1,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=1,dac=0x10, slk0={}, slk1={}".format(slk0, slk1)
+                self.tcp.femb_cfg()
+                self.tcp.cd_fe_cali()
+                self.tcp.fc_act_cal() #enalbe LArASIC calibration
+                fp = hdf_dir + "CHK_response_SE_{}.h5".format(lkc[i])
+                if i >= 2:
+                    femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True, ana_chk=False ) 
+                else:
+                    femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True, ana_chk=True ) 
+
+        sncs = ["900mVBL", "200mVBL"]
+        sgs = ["14_0mVfC", "25_0mVfC", "7_8mVfC", "4_7mVfC" ]
+        sts = ["1_0us", "0_5us",  "3_0us", "2_0us"]
+        for i in range(2):
+            snc = i
+            for j in range(4):
+                sg0 = j%2
+                sg1 = j//2
+                for k in range(4):
+                    st0 = k%2
+                    st1 = k//2
+                    log = "Check LArASIC response, FE with {}_{}_{}".format(sncs[i], sgs[j], sts[k])
+                    print (log)
+                    femb_data = False
+                    while femb_data == False:
+                        self.logs["CHK_response_SE_{}_{}_{}".format(sncs[i], sgs[j], sts[k])] = log
+                        self.tcp.set_fe_reset()
+                        self.tcp.set_fe_board(sts=1,snc=snc,sg0=sg0,sg1=sg1,st0=st0,st1=st1,swdac=1,dac=0x10)
+                        self.logs["CHK_response_SE_FE_CFG__{}_{}_{}".format(sncs[i],sgs[j],sts[k])] = "sts=1,snc={},sg0={},sg1={},st0={},st1={},swdac=1,dac=0x10".format(snc, sg0, sg1, st0, st1)
+                        self.tcp.femb_cfg()
+                        self.tcp.cd_fe_cali()
+                        self.tcp.fc_act_cal() #enalbe LArASIC calibration
+                        fp = hdf_dir + "CHK_response_SE_{}_{}_{}.h5".format(sncs[i], sgs[j], sts[k])
+                        femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
+
+        #log = "Check LArASIC response with 2-bit DAC and pulse from WIB"
+        #print (log)
+        #femb_data = False
+        #while femb_data == False:
+        #    self.logs["CHK_2bitDAC_WIBPLS"] = log
+        #    self.tcp.set_fe_reset()
+        #    self.tcp.set_fe_board(sts=1,snc=1,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00)
+        #    self.logs["CHK_2bitDAC_WIBPLS"] = "sts=1,snc=0,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00"
+        #    self.gen.gen_chn_sw(chn=1, SW="ON")
+        #    self.tcp.femb_cfg()
+        #    self.tcp.wib_cntl_cs(lemo_en = True)
+        #    self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x27, c_data=0x1f)
+        #    self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x27, c_data=0x1f)
+        #    self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x3) 
+        #    self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0)
+        #    time.sleep(2)
+        #    fp = hdf_dir + "CHK_2bitDAC_WIBPLS.h5"
+        #    femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
+        #    input ("pause")
+        #    self.tcp.wib_cntl_cs(lemo_en = False)
+        #    self.gen.gen_chn_sw(chn=1, SW="OFF")
+        #    self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x2)
+        #    self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0x0)
+        #    time.sleep(1)
 
     def femb_asicdac_calis(self, femb_no=0 ): 
         hw_ver, fw_ver = self.tcp.wib_ver()
@@ -770,21 +805,19 @@ class QC_runs( ):
                         femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=1000, plot_en = True, rms_en = True ) 
 
 
-    def load_logs(self): 
-        with open("./logs_dir.txt", 'r') as fp:
+    def load_logs(self, femb_no=0): 
+        with open("./logs_dir_femb{}.txt".format(femb_no), 'r') as fp:
             fp_logs = fp.read()
         with open(fp_logs, 'rb') as fp:
             self.logs = pickle.load(fp)
             self.save_dir = self.logs["save_dir"] 
             print (self.save_dir)
 
-
-    def dump_logs(self, tm=1 ): 
+    def dump_logs(self, tm=1,femb_no=0): 
         with open(self.save_dir + "logs_tm{:03d}.bin".format(tm), 'wb') as fp:
             pickle.dump(self.logs, fp)
-        if (tm ==1):
-            with open("./logs_dir.txt", 'w') as fp:
-                fp.write(self.save_dir + "logs_tm{:03d}.bin".format(tm))
+
+
 
     def close(self, femb_no=0 ): 
         self.tcp.femb_pwr_set(femb=femb_no, pwr_on=0)

@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/6/2022 11:49:02 AM
+Last modified: 5/11/2022 4:50:44 PM
 """
 
 import numpy as np
@@ -162,8 +162,8 @@ def data_ana(femb_data):
 
     for chipi in range(8):
         plsn = (len(femb_data[chipi][0])//500)-10
-        if plsn > 300:
-            psln = 300
+        if plsn > 100:
+            psln = 100
 
         for i in range(plsn):
             if i == 0:
@@ -232,7 +232,7 @@ def FEMB_PLOT(chn_rmss,chn_peds, chn_pkps, chn_pkns, chn_onewfs, chn_avgwfs, sav
         y3 = chn_onewfs[chni][25:ts+25]
         y4 = chn_avgwfs[chni][25:ts+25]
         FEMB_SUB_PLOT(ax3, x, y3, title="Waveform Overlap (1 cycle)", xlabel="Time / $\mu$s", ylabel="ADC /bin", color='C%d'%(chni%9))
-        FEMB_SUB_PLOT(ax4, x, y4, title="Averaging(300 Cycles) Waveform Overlap", xlabel="Time / $\mu$s", ylabel="ADC /bin", color='C%d'%(chni%9))
+        FEMB_SUB_PLOT(ax4, x, y4, title="Averaging(100 Cycles) Waveform Overlap", xlabel="Time / $\mu$s", ylabel="ADC /bin", color='C%d'%(chni%9))
                 
     plt.tight_layout( rect=[0.05, 0.05, 0.95, 0.95])
     fn = save_dir + "response.png"
@@ -246,14 +246,14 @@ def FEMB_CHKOUT_Input(rootdir):
     #tester = "SG"
     femb_sn = int(input ("please input FEMB SN (000-999): "))
 #    femb_batch = int(input ("please input FEMB Assembly Batch (00-99): "))
-#    env_cs = input("Test is performed at cold(LN2) (Y/N)? :")
-    env_cs = "n"
+    env_cs = input("Test is performed at cold(LN2) (Y/N)? :")
+#    env_cs = "n"
     if ("Y" in env_cs) or ("y" in env_cs):
         env = "LN"
     else:
         env = "RT"
-#    ToyTPC_en = input("ToyTPC at FE inputs (Y/N) : ")
-    ToyTPC_en = "n"
+    ToyTPC_en = input("ToyTPC at FE inputs (Y/N) : ")
+#    ToyTPC_en = "n"
     note = input("A short note (<80 letters):")
     if ("Y" in ToyTPC_en) or ("y" in ToyTPC_en):
         ToyTPC = "150pF"
@@ -514,7 +514,7 @@ while True:
         #    if "RMS" in strin:
         #        val = 20000
         #    else:
-            val = 5000
+            val = 1000
             data = udp.get_rawdata_packets(val=val)
             chip_data = conv.raw_conv_feedloc(data)
             if chip_data != None:

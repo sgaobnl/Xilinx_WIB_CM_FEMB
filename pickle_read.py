@@ -5,12 +5,12 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 4/28/2022 11:23:20 AM
+Last modified: 5/12/2022 1:23:20 PM
 """
 
 import pickle
 
-fp = "D:/IO_1826_1B/QC/FEMB022_LN_150pF_R006/logs_tm008.bin"
+fp = "D:/IO_1826_1B/QC/FEMB901_RT_150pF/logs_tm003.bin"
 with open(fp, 'rb') as fp:
     logs = pickle.load(fp)
 
