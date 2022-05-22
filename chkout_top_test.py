@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/21/2022 4:26:55 PM
+Last modified: 5/22/2022 9:10:51 AM
 """
 
 import numpy as np
@@ -39,7 +39,7 @@ def generate_report(result_dict):
     pdf.ln(2)
 
     pdf.set_font('Times', '', 12)
-    pdf.cell(30, 5, 'FEMB ID = {:04d}'.format(result_dict["FEMB_SN"]), 0, 1)
+    pdf.cell(30, 5, 'FEMB ID = {:04d},  SLOT={}'.format(result_dict["FEMB_SN"],result_dict["Slot"]), 0, 1)
    
     pdf.set_font('Times', '', 12)
     pdf.cell(30, 5, 'Date&Time: %s'%result_dict["datetime"].strftime("%Y-%m-%d %H:%M:%S"), 0, 0)
@@ -385,6 +385,7 @@ def FEMB_CHK(rootdir, save_dir, femb, femb_sn, env, tester, ToyTPC, note):
 
     
     result_dict["FEMB_SN"] = femb_sn
+    result_dict["Slot"] = tcp.link_cs/2
     result_dict["Env"] = env 
     result_dict["Cd"] = ToyTPC
     result_dict["save_dir"] = save_dir 
