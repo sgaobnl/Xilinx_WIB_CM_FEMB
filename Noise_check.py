@@ -57,7 +57,7 @@ rms=[]
 
 y_hi=0
 y_lo=10
-
+name=[]
 
 for i in range(10):   # files for a same board
     if i==0:
@@ -88,6 +88,7 @@ for i in range(10):   # files for a same board
     if not good_file:
         continue
     rms.append(rms_file)
+    name.append(i)
     tmp_y_hi=np.max(np.array(rms_file))
     tmp_y_lo=np.min(np.array(rms_file))
 
@@ -105,7 +106,7 @@ if y_hi+0.5>7:
 
 x= range(128)
 for i in range(len(rms)):
-    axes.plot(x,rms[i],marker=".",label="R{:03d}".format(i))
+    axes.plot(x,rms[i],marker=".",label="R{:03d}".format(name[i]))
     axes.set_ylim(y_lo-0.5,y_hi+0.5)
 axes.legend()
 axes.set_title("#{} Noise RMS".format(fbno))
