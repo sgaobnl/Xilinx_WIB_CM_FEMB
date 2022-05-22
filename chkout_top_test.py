@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/15/2022 12:03:02 PM
+Last modified: 5/21/2022 4:26:55 PM
 """
 
 import numpy as np
@@ -174,7 +174,7 @@ def data_ana(femb_data):
     for chipi in range(8):
         plsn = (len(femb_data[chipi][0])//500)-10
         if plsn > 100:
-            psln = 100
+            plsn = 100
 
         for i in range(plsn):
             if i == 0:
@@ -528,6 +528,12 @@ def FEMB_CHK(rootdir, save_dir, femb, femb_sn, env, tester, ToyTPC, note):
     result_dict["power_vadc_meas"] = pwr_info[1]
     result_dict["power_vcd_meas"] =  pwr_info[2]
     result_dict["power_bias_meas"] = pwr_info[3]
+    result_dict["RMS_noise"] = ana[0]
+    reulst_dict["PEDS"] = ana[1]
+    reulst_dict["Peak_p"] = ana[2]
+    reulst_dict["Peak_n"] = ana[3]
+    reulst_dict["Onewave"] = ana[4]
+    reulst_dict["Average"] = ana[5]
     
     
     fn = FEMB_PLOT(ana[0],ana[1],ana[2],ana[3],ana[4],ana[5],save_dir)

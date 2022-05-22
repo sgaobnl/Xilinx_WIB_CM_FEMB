@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 5/5/2022 1:08:46 PM
+Last modified: 5/17/2022 9:09:21 AM
 """
 
 from tcp import TCPSocket
@@ -18,6 +18,7 @@ import copy
 class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
     def __init__(self):
         super().__init__()
+        self.auto_cali=False
         self.adcs_paras = [ # c_id, diff_en, sdc_en, vrefp, vrefn, vcmo, vcmi
                             [0x4, 0, 0, 0xDF, 0x33, 0x89, 0x67],
                             [0x5, 0, 0, 0xDF, 0x33, 0x89, 0x67],
@@ -78,7 +79,7 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
         self.femb_wr_chk (c_id=2, c_page=0, c_addr = 0x11, c_data = 0x07)
 
 
-    def adc_cfg (self, adc_no):
+    def adc_cfg (self, adc_no ):
         c_id    = self.adcs_paras[adc_no][0]
         diff_en = self.adcs_paras[adc_no][1] 
         sdc_en  = self.adcs_paras[adc_no][2] 
@@ -100,13 +101,15 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
         self.femb_wr_chk(c_id,c_page=1, c_addr=0x9a, c_data=vcmo) #vrefn
         self.femb_wr_chk(c_id,c_page=1, c_addr=0x9b, c_data=vcmi) #vrefn
 
-        ###auto calibration
-        ##self.femb_wr_chk(c_id,c_page=1, c_addr=0x9f, c_data=0) 
-        ##time.sleep(0.01)
-        ##self.femb_wr_chk(c_id,c_page=1, c_addr=0x9f, c_data=0x03) 
-        ##self.femb_wr_chk(c_id,c_page=1, c_addr=0x9f, c_data=0x03) 
-        ##time.sleep(0.5)
-        ##self.femb_wr_chk(c_id,c_page=1, c_addr=0x9f, c_data=0) 
+        if self.auto_cali:
+            #auto calibration
+            self.femb_wr_chk(c_id,c_page=1, c_addr=0x9f, c_data=0) 
+            time.sleep(0.01)
+            self.femb_wr_chk(c_id,c_page=1, c_addr=0x9f, c_data=0x03) 
+            time.sleep(0.3)
+            self.femb_wr_chk(c_id,c_page=1, c_addr=0x9f, c_data=0) 
+        else:
+            print ("ADC auto calibration is disabled")
 
     def fc_act_cal(self):
         self.femb_cd_wr(c_id=3, c_page=0, c_addr = 0x20, c_data = 1)
