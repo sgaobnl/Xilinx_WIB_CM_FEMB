@@ -1,6 +1,7 @@
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 class CALI_FEMB:
 
@@ -11,6 +12,7 @@ class CALI_FEMB:
         self.adc={}
         self.rms={}
         self.gains={}
+        self.ENC={}
 
     def DAC_DU_Ratio(self,makeplot=False):
         fp = self.folder + "logs_tm008.bin"
@@ -33,12 +35,15 @@ class CALI_FEMB:
 
             for asic in range(8):
                 dac_mea=[]
+                vref=0
                 for vdac in (0x00, 0x20, 0x3f):
                     tmp_dac=logs["Mon_LArASIC{}_{}_DAC{:02x}".format(asic, sgi, vdac)][0]
+                    if vdac==0:
+                        vref=tmp_dac
                     dac_mea.append(tmp_dac)
                 dac_mea=np.array(dac_mea)
                 slope,intercept=np.polyfit(dac_set,dac_mea,1)
-                results[sgi].append((slope, intercept))
+                results[sgi].append((-slope, vref-intercept))
 
                 if makeplot:
                     plt.scatter(dac_set,dac_mea,color=colors[asic], label="asic{}: {:.2f}*x+{:.2f}".format(asic,slope,intercept))
@@ -112,7 +117,7 @@ class CALI_FEMB:
         self.adc=adc_dict
         self.rms=rms_dict
 
-    def Get_Gain(self, makeplot=False, linearplot=False):
+    def Get_Gain_ENC(self, makeplot=False, linearplot=False):
        
         CC=1.85*pow(10,-13)
         e=1.602*pow(10,-19)
@@ -126,7 +131,7 @@ class CALI_FEMB:
                     for asic in range(8):
                         slope=self.dac_du_ratio[sgi][asic][0]
                         intercept=self.dac_du_ratio[sgi][asic][1]
-                        chip_Q=(slope*dac_set+intercept)*CC/e  # a list of voltages for set DACs      
+                        chip_Q=(slope*dac_set+intercept)*CC/e/1000.0  # a list of voltages for set DACs, convert mV to V
                         QQ[ikey].append(chip_Q) 
 
         gains={}
@@ -162,15 +167,27 @@ class CALI_FEMB:
                     plt.show()
         
         self.gains=gains
+        self.ENC=ENC
 
         chan=range(128)
         if makeplot:
+            save_dir = self.folder+"CALI/"
+
+            if not (os.path.exists(save_dir)):
+                try:
+                    os.makedirs(save_dir)
+                except OSError:
+                    print("Error to create folder %s"%save_dir)
+                    input("hit any button and then 'Enter' to exit")
+                    sys.exit()    
+
             for ikey in gains.keys():
                 plt.plot(chan, gains[ikey],marker=".")
                 plt.title(ikey)
                 plt.xlabel("chan")
                 plt.ylabel("gain")
-                plt.show()
+                plt.savefig(save_dir+"{}_gain.png".format(ikey))
+                plt.close()
 
         if makeplot:
             for ikey in ENC.keys():
@@ -178,7 +195,75 @@ class CALI_FEMB:
                 plt.title(ikey)
                 plt.xlabel("chan")
                 plt.ylabel("ENC")
-                plt.show()
+                plt.savefig(save_dir+"{}_ENC.png".format(ikey))
+                plt.close()
+
+    def Avg_Gain_ENC(self, makeplot=False):
+
+        sncs = ["900mVBL", "200mVBL"]
+        sgs = ["14_0mVfC", "25_0mVfC", "7_8mVfC", "4_7mVfC" ]
+        sts = ["0_5us", "1_0us",  "2_0us", "3_0us"]
+
+        avg_gain={}
+        avg_ENC={}
+        for ikey,gains in self.gains.items():
+            gains=np.array(gains)
+
+            tmp_mean = np.mean(gains)
+            tmp_std = np.std(gains)
+
+            avg_gain[ikey]=(tmp_mean,tmp_std)
+
+        for ikey,ENC in self.ENC.items():
+            ENC=np.array(ENC)
+
+            tmp_mean = np.mean(ENC)
+            tmp_std = np.std(ENC)
+
+            avg_ENC[ikey]=(tmp_mean,tmp_std)
+
+        save_dir = self.folder+"CALI/"
+
+        if not (os.path.exists(save_dir)):
+            try:
+               os.makedirs(save_dir)
+            except OSError:
+               print("Error to create folder %s"%save_dir)
+               input("hit any button and then 'Enter' to exit")
+               sys.exit()    
+
+        sgi="14_0mVfC"
+        for snc in sncs:
+            thisgain_mean=[]
+            thisgain_std=[]
+ 
+            for sti in sts:
+                ikey = "{}_{}_{}".format(snc,sgi,sti)
+                if ikey in avg_gain.keys():
+                    thisgain_mean.append(avg_gain[ikey][0])
+                    thisgain_std.append(avg_gain[ikey][1])
+
+            plt.errorbar(sts,thisgain_mean, yerr=thisgain_std, marker=".")
+            plt.title("Gain mean at {}".format(snc))
+
+            plt.savefig(save_dir+snc+"_gain_avg.png")
+            plt.close()
+
+        for snc in sncs:
+            thisENC_mean=[]
+            thisENC_std=[]
+ 
+            for sti in sts:
+                ikey = "{}_{}_{}".format(snc,sgi,sti)
+                if ikey in avg_ENC.keys():
+                    thisENC_mean.append(avg_ENC[ikey][0])
+                    thisENC_std.append(avg_ENC[ikey][1])
+
+            plt.errorbar(sts,thisENC_mean, yerr=thisENC_std, marker=".")
+            plt.title("ENC mean at {}".format(snc))
+
+            plt.savefig(save_dir+snc+"_ENC_avg.png")
+            plt.close()
 
 if __name__=='__main__':
 
@@ -186,5 +271,6 @@ if __name__=='__main__':
     femb=CALI_FEMB(f)
     femb.ADC_DU()
     femb.DAC_DU_Ratio(makeplot=False)
-    femb.Get_Gain(makeplot=True)
+    femb.Get_Gain_ENC(makeplot=False)
+    femb.Avg_Gain_ENC()
    
