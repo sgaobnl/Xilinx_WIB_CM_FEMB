@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/22/2022 9:10:51 AM
+Last modified: 5/25/2022 9:11:15 PM
 """
 
 import numpy as np
@@ -187,9 +187,15 @@ def data_ana(femb_data):
         for chn in range(16):
             peddata = []
             chndata = femb_data[chipi][chn][posp:]
-            one_wf = chndata[0:500]
+            #one_wf = chndata[0:500]
+            rms_min=0
             for i in range(plsn):
                 peddata += chndata[150 + 500*i: 500 + 500*i] 
+                tmprms = np.std(chndata[150 + 500*i: 500 + 500*i])
+                if tmprms>rms_min:
+                    one_wf =  chndata[500*i: 500 + 500*i]
+                    rms_min = tmprms
+
                 if i == 0:
                     avg_wf = np.array(chndata[0:500])&0xffff
                 else:
