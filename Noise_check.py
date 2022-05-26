@@ -171,14 +171,13 @@ def PLOT_ALL_RMS():
     plt.savefig(save_dir+"FEMB{}_{}_{}_RMS.png".format(fbno,env,toyTPC))
     plt.show()
     
-def PLOT_ALLWAVES(rms_cut):  # plot all the waves for one channel     
+def PLOT_ALLWAVES(rms_cut,low_rms=False):  # plot all the waves for one channel     
 
-    fbno=227
+    fbno=203
     
-    fbno=input("FEMB board number:  ")
     env="LN"
     toyTPC="150pF"
-    ifile="_R005"
+    ifile="_R002"
     
     
     hdf_dir = "D:/IO_1826_1B/CHKOUT/FEMB{}_{}_{}{}/".format(fbno,env,toyTPC,ifile)
@@ -203,7 +202,15 @@ def PLOT_ALLWAVES(rms_cut):  # plot all the waves for one channel
     for chan in range(128):
         CH_str="CH{}".format(chan)
         rms,ped = ana_data(fp[CH_str][()])
-        if rms>rms_cut:
+
+        ISCHECK=False
+        if low_rms==True and rms<rms_cut:
+            ISCHECK=True
+
+        if low_rms==False and rms>rms_cut:
+            ISCHECK=True
+
+        if ISCHECK:
             npulse = len(ped)//350
 
             xx=range(500)
@@ -219,5 +226,5 @@ def PLOT_ALLWAVES(rms_cut):  # plot all the waves for one channel
                 plt.title("CH{} All waves".format(chan))
                 plt.show()
 
-PLOT_ALLWAVES(100)
+PLOT_ALLWAVES(2,low_rms=True)
     
