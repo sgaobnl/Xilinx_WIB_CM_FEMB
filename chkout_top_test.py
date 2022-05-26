@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/15/2022 12:03:02 PM
+Last modified: 5/21/2022 3:15:03 PM
 """
 
 import numpy as np
@@ -174,7 +174,7 @@ def data_ana(femb_data):
     for chipi in range(8):
         plsn = (len(femb_data[chipi][0])//500)-10
         if plsn > 100:
-            psln = 100
+            plsn = 100
 
         for i in range(plsn):
             if i == 0:
@@ -389,6 +389,7 @@ def FEMB_CHK(rootdir, save_dir, femb, femb_sn, env, tester, ToyTPC, note):
     result_dict["Cd"] = ToyTPC
     result_dict["save_dir"] = save_dir 
     result_dict["Tester"] =  tester
+    result_dict["slot"] = femb
     result_dict["Note"] = note 
     
     ################################################################################################
@@ -558,21 +559,23 @@ else:
 
 # record the FEMB number
 FEMB_sn=[]
+femb=[]
 
 for i in range(4):
     have_FEMB = input ("Is there a FEMB in slot "+str(i)+" (Y/N): ")
     if have_FEMB=="Y" or have_FEMB=="y":
         femb_sn = int(input ("please input FEMB SN (000-999): "))
         FEMB_sn.append(femb_sn)
+        femb.append(i)
 
 if not FEMB_sn:
     sys.exit("no FEMB sn input")
 else:
-    femb=0
+    nfemb=0
     for femb_sn in FEMB_sn:
         save_dir = rootdir + "FEMB{:03d}_{}_{}/".format(femb_sn, env, ToyTPC)
         save_dir = FEMB_CHKOUT_folder(save_dir)
-        FEMB_CHK(rootdir, save_dir, femb, femb_sn, env, tester, ToyTPC, note)
-        femb = femb+1
+        FEMB_CHK(rootdir, save_dir, femb[nfemb], femb_sn, env, tester, ToyTPC, note)
+        nfemb = nfemb+1
 
 

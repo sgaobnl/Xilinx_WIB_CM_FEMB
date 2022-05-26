@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/15/2022 12:12:07 PM
+Last modified: 5/26/2022 11:15:06 AM
 """
 
 import numpy as np
@@ -393,7 +393,7 @@ if (udpver == 0x1A5):
     print ("UDP link built.")
 result_dict["WIB_UDP_FW_ver"] = udpver
 
-femb=3
+femb=2
 if femb == 0:
     tcp.link_cs = 0
 elif femb == 1:
@@ -429,6 +429,7 @@ time.sleep(5)
 tcp.femb_pwr_set(femb=femb, pwr_on=1, v_fe=v_fe, v_adc=v_adc, v_cd=v_cd)
 time.sleep(2)
 tcp.set_fe_board(sts=0,snc=0,sg0=0,sg1=0,st0=1,st1=1,swdac=0,dac=0x0)
+tcp.auto_cali = True
 tcp.femb_cfg()
 time.sleep(2)
 for i in range(5):
@@ -440,13 +441,19 @@ pwr_info = tcp.femb_pwr_rd(femb=femb)
 pwr_info = tcp.femb_pwr_rd(femb=femb)
 pwr_info = tcp.femb_pwr_rd(femb=femb)
 pwr_en = pwr_chk(pwr_info, v_fe, v_adc, v_cd, v_bias, iref_fe, iref_adc, iref_cd, iref_bias)
-if pwr_en ==0 :
-    tcp.femb_pwr_set(femb=femb, pwr_on=0)
-    input ("hit any button and then 'Enter' to exit")
-    exit()
-    print ("Turn FEMB off and exit...")
-else:
-    print ("FEMB power consumption is in the normal range")
+
+while (pwr_en == 0):
+    pwr_info = tcp.femb_pwr_rd(femb=femb)
+    pwr_en = pwr_chk(pwr_info, v_fe, v_adc, v_cd, v_bias, iref_fe, iref_adc, iref_cd, iref_bias)
+    if pwr_en ==0 :
+        tmp = input ("hit 'Y' or 'y' to exit, hit any other buttons to rechk")
+        if ("Y" in tmp) or ("y" in tmp):
+            tcp.femb_pwr_set(femb=femb, pwr_on=1)
+            exit()
+        print ("Turn FEMB off and exit...")
+    else:
+        print ("FEMB power consumption is in the normal range")
+        break
 result_dict["power_vfe_ref"] =  (v_fe,  iref_fe)
 result_dict["power_vadc_ref"] = (v_adc, iref_adc)
 result_dict["power_vcd_ref"] =  (v_cd,  iref_cd,)

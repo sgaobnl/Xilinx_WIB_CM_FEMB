@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 5/12/2022 1:16:36 PM
+Last modified: 5/17/2022 10:43:50 AM
 """
 
 import numpy as np
@@ -561,6 +561,7 @@ class QC_runs( ):
         log = "Check LArASIC response with single-ended interface between FE and ADC"
         print (log)
         femb_data = False
+        self.tcp.auto_cali = True
         while femb_data == False:
             self.logs["CHK_response_SE"] = log
             self.tcp.set_fe_reset()
@@ -586,7 +587,7 @@ class QC_runs( ):
             self.tcp.cd_fe_cali()
             self.tcp.fc_act_cal() #enalbe LArASIC calibration
             fp = hdf_dir + "CHK_response_DIFF.h5"
-            time.sleep(0.5)
+            time.sleep(1.5)
             femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
             for i in range(8):
                 self.tcp.adcs_paras[i][1] = 0
@@ -637,30 +638,32 @@ class QC_runs( ):
                         fp = hdf_dir + "CHK_response_SE_{}_{}_{}.h5".format(sncs[i], sgs[j], sts[k])
                         femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
 
-        #log = "Check LArASIC response with 2-bit DAC and pulse from WIB"
-        #print (log)
-        #femb_data = False
-        #while femb_data == False:
-        #    self.logs["CHK_2bitDAC_WIBPLS"] = log
-        #    self.tcp.set_fe_reset()
-        #    self.tcp.set_fe_board(sts=1,snc=1,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00)
-        #    self.logs["CHK_2bitDAC_WIBPLS"] = "sts=1,snc=0,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00"
-        #    self.gen.gen_chn_sw(chn=1, SW="ON")
-        #    self.tcp.femb_cfg()
-        #    self.tcp.wib_cntl_cs(lemo_en = True)
-        #    self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x27, c_data=0x1f)
-        #    self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x27, c_data=0x1f)
-        #    self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x3) 
-        #    self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0)
-        #    time.sleep(2)
-        #    fp = hdf_dir + "CHK_2bitDAC_WIBPLS.h5"
-        #    femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
-        #    input ("pause")
-        #    self.tcp.wib_cntl_cs(lemo_en = False)
-        #    self.gen.gen_chn_sw(chn=1, SW="OFF")
-        #    self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x2)
-        #    self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0x0)
-        #    time.sleep(1)
+        if False:
+            log = "Check LArASIC response with 2-bit DAC and pulse from WIB"
+            print (log)
+            femb_data = False
+            while femb_data == False:
+                self.logs["CHK_2bitDAC_WIBPLS"] = log
+                self.tcp.set_fe_reset()
+                self.tcp.set_fe_board(sts=1,snc=1,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00)
+                self.logs["CHK_2bitDAC_WIBPLS"] = "sts=1,snc=0,sg0=1,sg1=1,st0=1,st1=1,swdac=2,dac=0x00"
+                self.gen.gen_chn_sw(chn=1, SW="ON")
+                self.tcp.femb_cfg()
+                self.tcp.wib_cntl_cs(lemo_en = True)
+                self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x27, c_data=0x1f)
+                self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x27, c_data=0x1f)
+                self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x3) 
+                self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0)
+                time.sleep(2)
+                fp = hdf_dir + "CHK_2bitDAC_WIBPLS.h5"
+                femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en=True ) 
+                input ("pause")
+                self.tcp.wib_cntl_cs(lemo_en = False)
+                self.gen.gen_chn_sw(chn=1, SW="OFF")
+                self.tcp.femb_cd_wr(c_id=3, c_page=0, c_addr=0x26, c_data=0x2)
+                self.tcp.femb_cd_wr(c_id=2, c_page=0, c_addr=0x26, c_data=0x0)
+                time.sleep(1)
+        self.tcp.auto_cali = False
 
     def femb_asicdac_calis(self, femb_no=0 ): 
         hw_ver, fw_ver = self.tcp.wib_ver()
@@ -750,10 +753,12 @@ class QC_runs( ):
                             self.logs["CALI_{}_{}_{}_ASICDAC0x{:02x}".format(sncs[i], sgs[j], sts[k], asicdac)] = log
                             self.tcp.set_fe_reset()
                             self.tcp.set_fe_board(sts=1,snc=snc,sg0=sg0,sg1=sg1,st0=st0,st1=st1,swdac=1,dac=asicdac)
+                            self.tcp.fc_act_cal() #disalbe LArASIC calibration
                             self.tcp.fe_spi_prog()
+                            self.tcp.fc_act_cal() #enalbe LArASIC calibration
                             time.sleep(0.05)
                             fp = hdf_dir + "CALI_{}_{}_{}_ASICDAC0x{:02x}.h5".format(sncs[i], sgs[j], sts[k], asicdac)
-                            femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en = False ) 
+                            femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=200, plot_en = True ) 
                             if femb_data == False:
                                 break
 
@@ -783,6 +788,7 @@ class QC_runs( ):
         hdf_dir = self.create_folder(sub_folder = "RMS")
 
         femb_data = False
+        self.tcp.auto_cali = True
         while femb_data == False:
             self.tcp.set_fe_reset()
             self.tcp.femb_cfg()
@@ -803,6 +809,7 @@ class QC_runs( ):
                         time.sleep(0.05)
                         fp = hdf_dir + "RMS_{}_{}_{}.h5".format(sncs[i], sgs[j], sts[k])
                         femb_data = self.femb_save_h5 (femb_no=femb_no, fp=fp, val=1000, plot_en = True, rms_en = True ) 
+        self.tcp.auto_cali = False
 
 
     def load_logs(self, femb_no=0): 

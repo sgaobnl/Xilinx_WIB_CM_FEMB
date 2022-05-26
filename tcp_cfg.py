@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:52:43 PM
-Last modified: 5/5/2022 1:08:46 PM
+Last modified: 5/18/2022 8:18:35 PM
 """
 
 from tcp import TCPSocket
@@ -96,7 +96,8 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
         else:
             self.femb_wr_chk(c_id,c_page=1, c_addr=0x80, c_data=0x62) #SDC enabled
 
-        self.femb_wr_chk(c_id,c_page=1, c_addr=0x98, c_data=vrefp) #vrefp self.femb_wr_chk(c_id,c_page=1, c_addr=0x99, c_data=vrefn) #vrefn
+        self.femb_wr_chk(c_id,c_page=1, c_addr=0x98, c_data=vrefp) #vrefp 
+        self.femb_wr_chk(c_id,c_page=1, c_addr=0x99, c_data=vrefn) #vrefn
         self.femb_wr_chk(c_id,c_page=1, c_addr=0x9a, c_data=vcmo) #vrefn
         self.femb_wr_chk(c_id,c_page=1, c_addr=0x9b, c_data=vcmi) #vrefn
 
@@ -136,6 +137,7 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
 
     def fe_spi_prog(self):
 #        self.link_cs = 0x0
+        i = 0
         while True:
             for chip in range(8):
                 for reg_id in range(16+2):
@@ -149,6 +151,12 @@ class TCP_CFG(TCPSocket, FE_ASIC_REG_MAPPING ):
             sts_cd1, sts_cd2 = self.fc_act_status()
             if (sts_cd1&0xff == 0xff) and (sts_cd2&0xff == 0xff):
                 break
+            else:
+                i = i + 1
+                print ("LArASIC readback status is {}, {} diffrent from 0xFF".format(sts_cd1, sts_cd2))
+                if (i > 10):
+                    print ("exit anyway")
+                    exit()
 #        self.femb_wr_chk(c_id=3, c_page=0, c_addr = 0x20, c_data = 8) # WIB
 #        self.femb_wr_chk(c_id=2, c_page=0, c_addr = 0x20, c_data = 8) # WIB
 #        time.sleep(0.01)
