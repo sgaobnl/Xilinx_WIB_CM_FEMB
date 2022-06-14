@@ -22,6 +22,129 @@ import matplotlib.pyplot as plt
 import h5py
 import datetime
 
+def Check_monitor_data(data, temp):
+
+    V_1 = data[1][1]
+    TEMP_1 = data[1][2]
+    VCMI_1 = data[1][3]
+    VCMO_1 = data[1][4]
+    VREFP_1 = data[1][5]
+    VREFN_1 = data[1][6]
+
+    if V_1>1300 or V_1<1100:
+        return False
+
+    if temp=='RT':
+        if TEMP_1<900 or TEMP_1>1000:
+            return False
+    
+    if temp=='LN':
+        if TEMP_1<200 or TEMP_1>300:
+            return False
+
+    if VCMI_1<900 or VCMI_1>1000:
+        return False
+
+    if VCMO_1<1100 or VCMO_1>1300:
+        return False
+
+    if VREFP_1<1800 or VREFP_1>2100:
+        return False
+
+    if VREFN_1<460 or VREFN_1>500:
+        return False
+
+    V_2 = data[2][1]
+    TEMP_2 = data[2][2]
+    VCMI_2 = data[2][3]
+    VCMO_2 = data[2][4]
+    VREFP_2 = data[2][5]
+    VREFN_2 = data[2][6]
+
+    if V_2>1300 or V_2<1100:
+        return False
+
+    if temp=='RT':
+        if TEMP_2<900 or TEMP_2>1000:
+            return False
+    
+    if temp=='LN':
+        if TEMP_2<200 or TEMP_2>300:
+            return False
+
+    if VCMI_2<900 or VCMI_2>1000:
+        return False
+
+    if VCMO_2<1100 or VCMO_2>1300:
+        return False
+
+    if VREFP_2<1800 or VREFP_2>2100:
+        return False
+
+    if VREFN_2<460 or VREFN_2>500:
+        return False
+
+    return True
+
+def Check_power_data(data):
+
+    fe_Vref = data[1][1]
+    fe_Vmea = data[1][2]
+    fe_cur = data[1][3]
+    fe_pwr = data[1][4]
+    
+    if (fe_Vref-fe_Vmea)<0 or (fe_Vref-fe_Vmea)>0.2:
+        return False
+
+    if fe_cur<0.4 or fe_cur>0.6:
+        return False
+
+    if fe_pwr<1.0 or fe_pwr>1.4:
+        return False
+
+    adc_Vref = data[2][1]
+    adc_Vmea = data[2][2]
+    adc_cur = data[2][3]
+    adc_pwr = data[2][4]
+
+    if (adc_Vref-adc_Vmea)<0 or (adc_Vref-adc_Vmea)>0.2:
+        return False
+
+    if adc_cur<1.2 or adc_cur>1.5:
+        return False
+
+    if adc_pwr<4.5 or adc_pwr>4.8:
+        return False
+
+    cd_Vref = data[3][1]
+    cd_Vmea = data[3][2]
+    cd_cur = data[3][3]
+    cd_pwr = data[3][4]
+
+    if (cd_Vref-cd_Vmea)<0 or (cd_Vref-cd_Vmea)>0.2:
+        return False
+
+    if cd_cur<0.1 or cd_cur>0.35:
+        return False
+
+    if cd_pwr<0.5 or cd_pwr>0.8:
+        return False
+
+    bias_Vref = data[4][1]
+    bias_Vmea = data[4][2]
+    bias_cur = data[4][3]
+    bias_pwr = data[4][4]
+
+    if (bias_Vref-bias_Vmea)<0 or (bias_Vref-bias_Vmea)>0.2:
+        return False
+
+    if bias_cur>0.1:
+        return False
+
+    if bias_pwr>0.04:
+        return False
+    
+    return True
 
 def generate_report(result_dict):
     print ("Generator the test report...")
@@ -95,9 +218,18 @@ def generate_report(result_dict):
     data[4][4] = result_dict["power_bias_meas"][0]*result_dict["power_bias_meas"][1]
     femb_pwr_con = data[1][4] + data[2][4] + data[3][4] + data[4][4]
 
+    pwr_result =Check_power_data(data):
+    if femb_pwr_con>6.8:
+        pwr_result = False
+
+    if pwr_result:
+        pwr_result_str = "Pass"
+    else:
+        pwr_result_str = "Fail"
+
     pdf.ln(2)
     pdf.cell(70)
-    pdf.cell(30, 5, 'Power Consumption (including cable dissipation) = {:0.3f}W'.format(femb_pwr_con) , 0, 1, 'C')
+    pdf.cell(30, 5, 'Power Consumption (including cable dissipation) = {:0.3f}W,   '.format(femb_pwr_con)+pwr_result_str, 0, 1, 'C')
     epw = pdf.w - 2*pdf.l_margin
     col_width = epw/5
     pdf.set_font('Times', '', 12) 
@@ -135,9 +267,16 @@ def generate_report(result_dict):
     data[2][5] = int(result_dict["ADC{:02d}_MeasRef".format(asic)][3][0])
     data[2][6] = int(result_dict["ADC{:02d}_MeasRef".format(asic)][4][0])
 
+
+    monitor_result = Check_monitor_data(data, result_dict["Env"])
+    if monitor_result:
+        monitor_result_str='True'
+    else:
+        monitor_result_str='False'
+
     pdf.ln(1)
     pdf.cell(70)
-    pdf.cell(30, 5, 'Monitoring path for FE-ADC#0 (unit: mV)' , 0, 1, 'C')
+    pdf.cell(30, 5, 'Monitoring path for FE-ADC#0 (unit: mV),   '+monitor_result_str , 0, 1, 'C')
     epw = pdf.w - 2*pdf.l_margin
     col_width = epw/7
     pdf.set_font('Times', '', 12) 
