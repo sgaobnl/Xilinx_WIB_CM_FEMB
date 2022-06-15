@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 5/25/2022 9:11:15 PM
+Last modified: 6/15/2022 11:12:29 AM
 """
 
 import numpy as np
@@ -218,7 +218,7 @@ def generate_report(result_dict):
     data[4][4] = result_dict["power_bias_meas"][0]*result_dict["power_bias_meas"][1]
     femb_pwr_con = data[1][4] + data[2][4] + data[3][4] + data[4][4]
 
-    pwr_result =Check_power_data(data):
+    pwr_result =Check_power_data(data)
     if femb_pwr_con>6.8:
         pwr_result = False
 
