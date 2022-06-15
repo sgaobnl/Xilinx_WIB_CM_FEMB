@@ -5,7 +5,7 @@ Author: GSS
 Mail: gao.hillhill@gmail.com
 Description: 
 Created Time: 3/20/2019 4:50:34 PM
-Last modified: 6/15/2022 12:07:37 PM
+Last modified: 6/15/2022 12:20:29 PM
 """
 
 import numpy as np
@@ -563,7 +563,7 @@ def FEMB_CHK(rootdir, save_dir, femb, femb_sn, env, tester, ToyTPC, note):
     pwr_info = tcp.femb_pwr_rd(femb=femb)
     time.sleep(1)
 
-    pwr_en =1
+    pwr_en =0
     while (pwr_en == 0):
         pwr_info = tcp.femb_pwr_rd(femb=femb)
         pwr_en = pwr_chk(pwr_info, v_fe, v_adc, v_cd, v_bias, iref_fe, iref_adc, iref_cd, iref_bias)
