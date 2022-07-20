@@ -300,7 +300,7 @@ class QC_runs( ):
                 self.logs["power_cycle{}_on_vfe_meas".format(i)] =  pwr_info[0]
                 self.logs["power_cycle{}_on_vadc_meas".format(i)] = pwr_info[1]
                 self.logs["power_cycle{}_on_vcd_meas".format(i)] =  pwr_info[2]
-            self.logs["power_cycle{}_on_bias_meas".format(i)] = pwr_info[3]
+                self.logs["power_cycle{}_on_bias_meas".format(i)] = pwr_info[3]
 
     def femb_mons (self, femb_no=0 ): 
         hw_ver, fw_ver = self.tcp.wib_ver()

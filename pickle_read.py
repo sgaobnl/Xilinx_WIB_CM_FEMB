@@ -10,9 +10,11 @@ Last modified: 5/25/2022 10:54:43 AM
 
 import pickle
 
-fp = "D:/IO_1826_1B/QC1/FEMB022_LN_150pF_R006/logs_tm008.bin"
+fp = "/home/hanjie/Desktop/protoDUNE/cold_electronics/FEMB_QC/FEMB_QC_data/FEMB346_LN_150pF/logs_tm004.bin"
 with open(fp, 'rb') as fp:
     logs = pickle.load(fp)
 
 for log in logs:
-    print (log, logs[log])
+    print (log)
+
+print(len(logs['D:/IO_1826_1B/QC/FEMB346_LN_150pF/PWR/power_cycle2_CHK_response_SE.h5'][4][0]))
