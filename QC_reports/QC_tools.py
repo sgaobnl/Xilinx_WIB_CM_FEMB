@@ -44,3 +44,71 @@ class QC_tools:
         fig.suptitle(title)
         plt.tight_layout( rect=[0.05, 0.05, 0.95, 0.95])
         return fig
+
+    def Config_Plot(self, xx, yy, xlabels, var, title):
+        fig_V1,axes_V1 = plt.subplots(3,2,figsize=(20,10))
+        fig_V2,axes_V2 = plt.subplots(3,2,figsize=(20,10))
+        fig_V3,axes_V3 = plt.subplots(3,2,figsize=(20,10))
+
+        cm = plt.get_cmap('tab20')
+
+        for i in range(8):  # per chip
+            for j in range(16):
+                ch = 16*i+j
+
+                if i<3:
+                   axes_V1[i,0].plot(xx,yy[0][i][j],label='ch{}'.format(j),color=cm(j/16))
+                   axes_V1[i,1].plot(xx,yy[1][i][j],label='ch{}'.format(j),color=cm(j/16))
+                if i>=3 and i<6:
+                   axes_V2[i-3,0].plot(xx,yy[0][i][j],label='ch{}'.format(j),color=cm(j/16))
+                   axes_V2[i-3,1].plot(xx,yy[1][i][j],label='ch{}'.format(j),color=cm(j/16))
+                if i>=6:
+                   axes_V3[i-6,0].plot(xx,yy[0][i][j],label='ch{}'.format(j),color=cm(j/16))
+                   axes_V3[i-6,1].plot(xx,yy[1][i][j],label='ch{}'.format(j),color=cm(j/16))
+
+            if i<3:
+               axes_V1[i,0].text(.2,.9,'chip {} @900mV BL'.format(i),transform=axes_V1[i,0].transAxes)
+               axes_V1[i,1].text(.2,.9,'chip {} @200mv BL'.format(i),transform=axes_V1[i,1].transAxes)
+            if i>=3 and i<6:
+               axes_V2[i-3,0].text(.2,.9,'chip {} @900mV BL'.format(i),transform=axes_V2[i-3,0].transAxes)
+               axes_V2[i-3,1].text(.2,.9,'chip {} @200mV BL'.format(i),transform=axes_V2[i-3,1].transAxes)
+            if i>=6:
+               axes_V3[i-6,0].text(.2,.9,'chip {} @900mV BL'.format(i),transform=axes_V3[i-6,0].transAxes)
+               axes_V3[i-6,1].text(.2,.9,'chip {} @200mV BL'.format(i),transform=axes_V3[i-6,1].transAxes)
+
+        axes_V3[2,0].axis('off')
+        axes_V3[2,1].axis('off')
+        axes_V1[0,0].legend(ncol=8, bbox_to_anchor=(0.05, 1.2), loc='upper left', borderaxespad=0.)
+        axes_V2[0,0].legend(ncol=8, bbox_to_anchor=(0.05, 1.2), loc='upper left', borderaxespad=0.)
+        axes_V3[0,0].legend(ncol=8, bbox_to_anchor=(0.05, 1.2), loc='upper left', borderaxespad=0.)
+        fig_V1.suptitle('{} vs. configurations'.format(var), fontsize=16)
+        fig_V2.suptitle('{} vs. configurations'.format(var), fontsize=16)
+        fig_V3.suptitle('{} vs. configurations'.format(var), fontsize=16)
+
+        plt.setp(axes_V1, xticks=xx, xticklabels=xlabels)
+        plt.setp(axes_V2, xticks=xx, xticklabels=xlabels)
+        plt.setp(axes_V3, xticks=xx, xticklabels=xlabels)
+        fig_V1.subplots_adjust(hspace = 0.2,wspace=0.05)
+        fig_V2.subplots_adjust(hspace = 0.2,wspace=0.05)
+        fig_V3.subplots_adjust(hspace = 0.2,wspace=0.05)
+        fig_V1.savefig('{}_V1_{}.png'.format(title,var))
+        fig_V2.savefig('{}_V2_{}.png'.format(title,var))
+        fig_V3.savefig('{}_V3_{}.png'.format(title,var))
+
+    def Current_Plot(self,xx, yy, xlabels, var):
+        fig,axes = plt.subplots(3,3,figsize=(10,12))
+        cm = plt.get_cmap('tab20')
+
+        for i in range(8):  # per chip
+            for j in range(16):
+                ch = 16*i+j
+                axes[i//3,i%3].plot(xx,yy[i][j],label='ch{}'.format(j),color=cm(j/16))
+
+            axes[i//3,i%3].text(.2,.9,'chip {}'.format(i),transform=axes[i//3,i%3].transAxes)
+
+        axes[2,2].axis('off')
+        axes[2,1].legend(ncol=3, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+        fig.suptitle('{} vs. current'.format(var), fontsize=16)
+        plt.setp(axes, xticks=xx, xticklabels=xlabels)
+        fig.savefig('CHK_current_{}.png'.format(var))
+
