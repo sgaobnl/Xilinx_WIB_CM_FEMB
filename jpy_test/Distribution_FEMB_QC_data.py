@@ -1,3 +1,8 @@
+#-----------------------------------------------------------
+# 	Author: Rado
+#	email: radofana@gmail.com
+#	Last modification: August 22, 2022
+#-----------------------------------------------------------
 '''
 	STRUCTURE OF THE DATA data_log[keys_data[0]]:
 		0: RMS
@@ -5,7 +10,11 @@
 		2: Positive peak
 		3: Negative Peak
 		4: One waveform
-		5: Average waveform	
+		5: Average waveform
+	INPUT:
+		Default input should be in a folder named data
+	OUTPUT:
+		The output of this code will be .png files stored in a folder named distributionPNG
 '''
 
 import pickle
@@ -120,10 +129,15 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, i
         printInfo('dataKey', dataKey)
         # append data corresponding to indexData to the list dataVar
         dataVar += data_log[dataKey][indexData]
+
+    h5Name_split = h5_filename.split('.')[0].split('_')
+    h5Name_split[0] = dataName[indexData]
+    title = '_'.join(h5Name_split)
+
     plt.figure(figsize=(15, 7))
     plt.hist(dataVar, bins=histBin)
     plt.xlabel(dataName[indexData], fontsize='14'); plt.ylabel('#')
-    plt.title(h5_filename.split('.')[0], fontsize='14')
+    plt.title(title, fontsize='14')
     plt.savefig(os.path.join(outputDir, dataName[indexData], dataName[indexData]+
                                         '_'+
                                          h5_filename.split('.')[0]+
@@ -131,6 +145,11 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, i
 
 ## MAIN FUNCTION
 if __name__ == '__main__':
+	## try to create a folder named distributionPNG
+	try:
+		os.mkdir('distributionPNG')
+	except:
+		pass
 	dataIndices = [0, 1]
 	h5_list = get_h5filenames(mainDir='../data', indexBin=5)
 	for indexData in dataIndices:
