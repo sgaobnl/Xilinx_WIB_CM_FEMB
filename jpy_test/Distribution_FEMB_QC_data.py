@@ -59,8 +59,9 @@ def get_keys(data_pickle, h5='h5'):
 
 def get_h5filenames(mainDir='../data', indexBin=5):
     femb = getFEMB_dir(mainDir)[0]
-    oneBin = get_bin_list(femb)[indexBin]
-    binDataLog = read_bin(os.path.join(femb, oneBin))
+    #oneBin = get_bin_list(femb)[indexBin]
+    #binDataLog = read_bin(os.path.join(femb, oneBin))
+    binDataLog = read_bin(os.path.join(femb, 'logs_tm006.bin'))
     keys = get_keys(binDataLog,'h5')
     # keys has to be a list to be able to use this function
     filenames = []
@@ -110,7 +111,7 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, i
     except:
         pass
     # get h5 key corresponding to indexh5
-    h5_filename = get_h5filenames()[indexh5]
+    h5_filename = get_h5filenames(mainDir=mainDir)[indexh5]
     printInfo('Name of the h5 file', h5_filename)
     
     # set variable to store the data
@@ -124,14 +125,15 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, i
         bin_list = get_bin_list(femb)
 
         if 'logs_tm006.bin' in bin_list:
-        	printInfo('FEMB folder', femb)
-	        printInfo('Name of the bin file', bin_list[indexBin])
+                printInfo('FEMB folder', femb)
+	        #printInfo('Name of the bin file', bin_list[indexBin])
 	        # read the data corresponding to indexBin
-	        data_log = read_bin(os.path.join(femb, bin_list[indexBin]))
-	        dataKey = get_keys(data_log, 'h5')[indexh5] # get one key corresponding to indexh5
+	        #data_log = read_bin(os.path.join(femb, bin_list[indexBin]))
+                data_log = read_bin(os.path.join(femb, 'logs_tm006.bin'))
+                dataKey = get_keys(data_log, 'h5')[indexh5] # get one key corresponding to indexh5
 	        # printInfo('dataKey', dataKey)
 	        # append data corresponding to indexData to the list dataVar
-	        dataVar += data_log[dataKey][indexData]
+                dataVar += data_log[dataKey][indexData]
 
     h5Name_split = h5_filename.split('.')[0].split('_')
     h5Name_split[0] = dataName[indexData]
