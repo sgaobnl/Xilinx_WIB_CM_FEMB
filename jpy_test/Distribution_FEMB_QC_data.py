@@ -122,13 +122,16 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, i
     for femb in fembs:
         # get list of bin files
         bin_list = get_bin_list(femb)
-        printInfo('Name of the bin file', bin_list[indexBin])
-        # read the data corresponding to indexBin
-        data_log = read_bin(os.path.join(femb, bin_list[indexBin]))
-        dataKey = get_keys(data_log, 'h5')[indexh5] # get one key corresponding to indexh5
-        printInfo('dataKey', dataKey)
-        # append data corresponding to indexData to the list dataVar
-        dataVar += data_log[dataKey][indexData]
+
+        if 'logs_tm006.bin' in bin_list:
+        	printInfo('FEMB folder', femb)
+	        printInfo('Name of the bin file', bin_list[indexBin])
+	        # read the data corresponding to indexBin
+	        data_log = read_bin(os.path.join(femb, bin_list[indexBin]))
+	        dataKey = get_keys(data_log, 'h5')[indexh5] # get one key corresponding to indexh5
+	        # printInfo('dataKey', dataKey)
+	        # append data corresponding to indexData to the list dataVar
+	        dataVar += data_log[dataKey][indexData]
 
     h5Name_split = h5_filename.split('.')[0].split('_')
     h5Name_split[0] = dataName[indexData]
@@ -146,12 +149,23 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, i
 ## MAIN FUNCTION
 if __name__ == '__main__':
 	## try to create a folder named distributionPNG
-	try:
-		os.mkdir('distributionPNG')
-	except:
-		pass
+	# try:
+	# 	os.mkdir('distributionPNG')
+	# except:
+	# 	pass
+
 	dataIndices = [0, 1]
-	h5_list = get_h5filenames(mainDir='../data', indexBin=5)
+
+	# path to the data source
+	mainDir = 'D:/IO_1826_1B/QC'
+
+	# path to the output png files
+	outputDir = 'I:/IO-1826-1B_QC/QC_general'
+
+	printInfo('mainDir', mainDir)
+	printInfo('outputDir', outputDir)
+
+	h5_list = get_h5filenames(mainDir=mainDir, indexBin=5)
 	for indexData in dataIndices:
 	    for indexh5, h5 in enumerate(h5_list):
-	        getDistribution(indexh5=indexh5, indexData=indexData, indexBin=5, histBin=50)
+	        getDistribution(mainDir=mainDir, outputDir=outputDir, indexh5=indexh5, indexData=indexData, indexBin=5, histBin=50)
