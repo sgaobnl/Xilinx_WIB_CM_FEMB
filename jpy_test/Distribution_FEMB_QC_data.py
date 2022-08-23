@@ -200,21 +200,21 @@ def femb_bin_tm006_hasAllh5(femb, mainDir):
 ## MAIN FUNCTION
 if __name__ == '__main__':
 	## try to create a folder named distributionPNG
-	try:
-		os.mkdir('distributionPNG')
-	except:
-		pass
+	# try:
+	# 	os.mkdir('distributionPNG')
+	# except:
+	# 	pass
 
 	dataIndices = [0, 1]
 
-	mainDir = '../data'
-	outputDir = 'distributionPNG'
+	# mainDir = '../data'
+	# outputDir = 'distributionPNG'
 	
 	# path to the data source
-	# mainDir = 'D:/IO_1826_1B/QC'
+	mainDir = 'D:/IO_1826_1B/QC'
 
 	# path to the output png files
-	# outputDir = 'I:/IO-1826-1B_QC/QC_general'
+	outputDir = 'I:/IO-1826-1B_QC/QC_general'
 
 	printInfo('mainDir', mainDir)
 	printInfo('outputDir', outputDir)
