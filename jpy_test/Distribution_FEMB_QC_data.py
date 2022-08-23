@@ -121,6 +121,7 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', fembs_list=[
         pass
         
     # get h5 key corresponding to indexh5
+
     h5_filename = get_h5filenames(mainDir=mainDir)[indexh5]
     printInfo('Data and h5 file', [dataName[indexData], h5_filename])
     
@@ -216,3 +217,4 @@ if __name__ == '__main__':
 							indexh5=indexh5, indexData=indexData, indexBin=5, histBin=50)
 
 	printInfo('ALL FEMBs USED', fembs_with_allH5)
+
