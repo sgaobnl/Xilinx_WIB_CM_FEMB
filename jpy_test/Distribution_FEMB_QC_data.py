@@ -20,6 +20,7 @@
 import pickle
 import os
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def getFEMB_dir(mainDir):
     # get a list of the FEMB directories
@@ -116,7 +117,12 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', fembs_list=[
 
     ## try to create a folder named dataName[indexData]
     try:
-        os.mkdir(os.path.join(outputDir, dataName[indexData]))
+        os.mkdir(os.path.join(outputDir, 'csv'))
+    except:
+        pass
+    try:
+        # os.mkdir(os.path.join(outputDir, dataName[indexData])) <== ACTIVATE WITH THE CODE TO PLOT HISTOGRAM
+        os.mkdir(os.path.join(outputDir, 'csv', dataName[indexData]))
     except:
         pass
         
@@ -126,8 +132,9 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', fembs_list=[
     printInfo('Data and h5 file', [dataName[indexData], h5_filename])
     
     # set variable to store the data
+    channelNumber = []
     dataVar = []
-    
+    folderNames = []
     ## get FEMBs dir
     #fembs_list = getFEMB_dir(mainDir)
     #fembs_with_tm006 = []
@@ -144,22 +151,37 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', fembs_list=[
 	    #data_log = read_bin(os.path.join(femb, bin_list[indexBin]))
         data_log = read_bin(os.path.join(femb, 'logs_tm006.bin'))
         dataKey = get_keys(data_log, 'h5')[indexh5] # get one key corresponding to indexh5
-	    # printInfo('dataKey', dataKey)
+
+        # channel number
+        tmpChannel = [i for i in range(1, 129)]
+        channelNumber += tmpChannel
+        # folder name
+        tmpFolders = [femb.split('/')[-1] for _ in range(128)]
+        folderNames += tmpFolders
 	    # append data corresponding to indexData to the list dataVar
         dataVar += data_log[dataKey][indexData]
+    
+    data_df = pd.DataFrame({})
+    if dataName[indexData] == 'RMS':
+        data_df = pd.DataFrame({'channelNumber': channelNumber, 'folderName': folderNames, 'RMS': dataVar})
+    elif dataName[indexData] == 'pedestal':
+        data_df = pd.DataFrame({'channelNumber': channelNumber, 'folderName': folderNames, 'pedestal': dataVar})
+    
+    # save data in a csv file
+    data_df.to_csv(os.path.join(outputDir, 'csv', dataName[indexData], dataName[indexData]+'_'+h5_filename.split('.')[0]+'.csv'), index=False)
 
-    h5Name_split = h5_filename.split('.')[0].split('_')
-    h5Name_split[0] = dataName[indexData]
-    title = '_'.join(h5Name_split)
+    # h5Name_split = h5_filename.split('.')[0].split('_') <== ACTIVATE WITH THE CODE ABOVE
+    # h5Name_split[0] = dataName[indexData]
+    # title = '_'.join(h5Name_split)
 
-    plt.figure(figsize=(15, 7))
-    plt.hist(dataVar, bins=histBin)
-    plt.xlabel(dataName[indexData], fontsize='14'); plt.ylabel('#')
-    plt.title(title, fontsize='14')
-    plt.savefig(os.path.join(outputDir, dataName[indexData], dataName[indexData]+
-                                        '_'+
-                                         h5_filename.split('.')[0]+
-                                         '.png'))
+    # plt.figure(figsize=(15, 7))
+    # plt.hist(dataVar, bins=histBin)
+    # plt.xlabel(dataName[indexData], fontsize='14'); plt.ylabel('#')
+    # plt.title(title, fontsize='14')
+    # plt.savefig(os.path.join(outputDir, dataName[indexData], dataName[indexData]+
+    #                                     '_'+
+    #                                      h5_filename.split('.')[0]+
+    #                                      '.png'))
 
 # verify if a FEMB folder has the same h5 files as the first folder
 def femb_bin_tm006_hasAllh5(femb, mainDir):
@@ -178,21 +200,21 @@ def femb_bin_tm006_hasAllh5(femb, mainDir):
 ## MAIN FUNCTION
 if __name__ == '__main__':
 	## try to create a folder named distributionPNG
-	#try:
-	#	os.mkdir('distributionPNG')
-	#except:
-	#	pass
+	try:
+		os.mkdir('distributionPNG')
+	except:
+		pass
 
 	dataIndices = [0, 1]
 
-	#mainDir = '../data'
-	#outputDir = 'distributionPNG'
+	mainDir = '../data'
+	outputDir = 'distributionPNG'
 	
 	# path to the data source
-	mainDir = 'D:/IO_1826_1B/QC'
+	# mainDir = 'D:/IO_1826_1B/QC'
 
 	# path to the output png files
-	outputDir = 'I:/IO-1826-1B_QC/QC_general'
+	# outputDir = 'I:/IO-1826-1B_QC/QC_general'
 
 	printInfo('mainDir', mainDir)
 	printInfo('outputDir', outputDir)
