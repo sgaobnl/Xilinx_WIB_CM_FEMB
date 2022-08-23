@@ -1,7 +1,7 @@
 #-----------------------------------------------------------
 # 	Author: Rado
 #	email: radofana@gmail.com
-#	Last modification: August 22, 2022
+#	Last modification: August 23, 2022
 #-----------------------------------------------------------
 '''
 	STRUCTURE OF THE DATA data_log[keys_data[0]]:
@@ -14,7 +14,7 @@
 	INPUT:
 		Default input should be in a folder named data
 	OUTPUT:
-		The output of this code will be .png files stored in a folder named distributionPNG
+		Default output of this code will be .png files stored in a folder named distributionPNG
 '''
 
 import pickle
@@ -59,8 +59,9 @@ def get_keys(data_pickle, h5='h5'):
 
 def get_h5filenames(mainDir='../data', indexBin=5):
     femb = getFEMB_dir(mainDir)[0]
-    oneBin = get_bin_list(femb)[indexBin]
-    binDataLog = read_bin(os.path.join(femb, oneBin))
+    #oneBin = get_bin_list(femb)[indexBin]
+    #binDataLog = read_bin(os.path.join(femb, oneBin))
+    binDataLog = read_bin(os.path.join(femb, 'logs_tm006.bin'))
     keys = get_keys(binDataLog,'h5')
     # keys has to be a list to be able to use this function
     filenames = []
@@ -96,42 +97,55 @@ def exploreFEMBData(mainDir, indexFEMB):
     #-> we can get data by writing: data_log[data_keys[indexKey]][indexData]
     #print(bin_list[5], ' - logs_tm006.bin')
     
-def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, indexBin=5, indexData=0, histBin=100):
+  
+def femb_has_tm006(femb):
+	bin_list = get_bin_list(femb)
+	if 'logs_tm006.bin' in bin_list:
+		return True
+	else:
+		return False
+
+
+def getDistribution(mainDir='../data', outputDir='distributionPNG', fembs_list=[], indexh5=0, indexBin=5, indexData=0, histBin=100):
     dataName = {0: 'RMS',
                1: 'pedestal',
                2: 'positive_peak',
                3: 'negative_peak',
                4: 'one_waveform',
                5: 'average_waveform'}
-    printInfo('dataname', dataName[indexData])
+
     ## try to create a folder named dataName[indexData]
     try:
         os.mkdir(os.path.join(outputDir, dataName[indexData]))
     except:
         pass
+        
     # get h5 key corresponding to indexh5
-    h5_filename = get_h5filenames()[indexh5]
-    printInfo('Name of the h5 file', h5_filename)
+    h5_filename = get_h5filenames(mainDir=mainDir)[indexh5]
+    printInfo('Data and h5 file', [dataName[indexData], h5_filename])
     
     # set variable to store the data
     dataVar = []
     
     ## get FEMBs dir
-    fembs = getFEMB_dir(mainDir)
+    #fembs_list = getFEMB_dir(mainDir)
+    #fembs_with_tm006 = []
     
-    for femb in fembs:
+    #for femb in fembs_list:
+    #    if femb_has_tm006(femb):
+    #        fembs_with_tm006.append(femb)
+    
+    for femb in fembs_list:
         # get list of bin files
         bin_list = get_bin_list(femb)
-
-        if 'logs_tm006.bin' in bin_list:
-        	printInfo('FEMB folder', femb)
-	        printInfo('Name of the bin file', bin_list[indexBin])
-	        # read the data corresponding to indexBin
-	        data_log = read_bin(os.path.join(femb, bin_list[indexBin]))
-	        dataKey = get_keys(data_log, 'h5')[indexh5] # get one key corresponding to indexh5
-	        # printInfo('dataKey', dataKey)
-	        # append data corresponding to indexData to the list dataVar
-	        dataVar += data_log[dataKey][indexData]
+	    #printInfo('Name of the bin file', bin_list[indexBin])
+	    # read the data corresponding to indexBin
+	    #data_log = read_bin(os.path.join(femb, bin_list[indexBin]))
+        data_log = read_bin(os.path.join(femb, 'logs_tm006.bin'))
+        dataKey = get_keys(data_log, 'h5')[indexh5] # get one key corresponding to indexh5
+	    # printInfo('dataKey', dataKey)
+	    # append data corresponding to indexData to the list dataVar
+        dataVar += data_log[dataKey][indexData]
 
     h5Name_split = h5_filename.split('.')[0].split('_')
     h5Name_split[0] = dataName[indexData]
@@ -146,16 +160,33 @@ def getDistribution(mainDir='../data', outputDir='distributionPNG', indexh5=0, i
                                          h5_filename.split('.')[0]+
                                          '.png'))
 
+# verify if a FEMB folder has the same h5 files as the first folder
+def femb_bin_tm006_hasAllh5(femb, mainDir):
+    h5_list = get_h5filenames(mainDir=mainDir, indexBin=5) # gets all h5 files in the first FEMB folder
+    data_keys = get_keys(read_bin(os.path.join(femb, 'logs_tm006.bin')))
+    
+    data_h5_keys = [d.split('/')[-1] for d in data_keys]
+    
+    for h5 in h5_list:
+        if h5 in data_h5_keys:
+            pass
+        else:
+            return False
+    return True
+    
 ## MAIN FUNCTION
 if __name__ == '__main__':
 	## try to create a folder named distributionPNG
-	# try:
-	# 	os.mkdir('distributionPNG')
-	# except:
-	# 	pass
+	#try:
+	#	os.mkdir('distributionPNG')
+	#except:
+	#	pass
 
 	dataIndices = [0, 1]
 
+	#mainDir = '../data'
+	#outputDir = 'distributionPNG'
+	
 	# path to the data source
 	mainDir = 'D:/IO_1826_1B/QC'
 
@@ -165,7 +196,23 @@ if __name__ == '__main__':
 	printInfo('mainDir', mainDir)
 	printInfo('outputDir', outputDir)
 
+	## get FEMBs dir
+	fembs_list = getFEMB_dir(mainDir)
+	fembs_with_tm006 = [] # this list contains all fembs having tm006
+
+	for femb in fembs_list:
+		if femb_has_tm006(femb):
+			fembs_with_tm006.append(femb)
+			
+	fembs_with_allH5 = [] # this list contains all fembs having the same h5 files as the first folder
+	for femb in fembs_with_tm006: # loop through fembs_with_tm006
+		if femb_bin_tm006_hasAllh5(femb, mainDir):
+			fembs_with_allH5.append(femb)
+	
 	h5_list = get_h5filenames(mainDir=mainDir, indexBin=5)
 	for indexData in dataIndices:
-	    for indexh5, h5 in enumerate(h5_list):
-	        getDistribution(mainDir=mainDir, outputDir=outputDir, indexh5=indexh5, indexData=indexData, indexBin=5, histBin=50)
+		for indexh5, h5 in enumerate(h5_list):
+			getDistribution(mainDir=mainDir, outputDir=outputDir, fembs_list=fembs_with_allH5, 
+							indexh5=indexh5, indexData=indexData, indexBin=5, histBin=50)
+
+	printInfo('ALL FEMBs USED', fembs_with_allH5)
