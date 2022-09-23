@@ -21,7 +21,7 @@ import pickle
 
 # function for one file
 def get_pathToFile(sourceMainDir='', dataType='pedestal', indexFile=0):
-    path_to_file = os.path.join(sourceMainDir, dataType, os.listdir(os.path.join(sourceMainDir, dataType))[indexFile])
+    path_to_file = '/'.join([sourceMainDir, dataType, os.listdir(os.path.join(sourceMainDir, dataType))[indexFile]])
     return path_to_file
 
 def read_csv(path_to_file: str):
@@ -127,6 +127,8 @@ def fit_withGaussian(sourceMainDir='', dataType='pedestal', outputDir='', indexF
     if skewed:
         loc = out_dist[3]
         scale = out_dist[4]
+    #
+    # plot the distribution with the fitting curve
     plt.figure(figsize=(12,7))
     plt.rcParams.update({'figure.max_open_warning': 0}) # get rid of the warning
     plt.plot(x, pdf, color='r', label='Gaussian fit')
