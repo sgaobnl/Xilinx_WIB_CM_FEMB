@@ -1,11 +1,13 @@
-from binascii import hexlify
-from codecs import readbuffer_encode
-from operator import index
+#**********************************************************
+#   Author: Rado
+#   email: radofana@gmail.com
+#   last modification: September 26, 2022
+#**********************************************************
+#from binascii import hexlify
+#from codecs import readbuffer_encode
+#from operator import index
 import os
-from string import hexdigits
-from symbol import continue_stmt
-from sys import path_hooks
-from turtle import ondrag
+#from turtle import ondrag
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -270,6 +272,26 @@ def plot_stdDIVmean_vs_shapingTime(path_to_csv='', BL='200mV', outputDir='',
     plt.show()
 #
 #
+## The dataFrame needs to have a columns named femb_ids
+## Function to remove informations about one femb
+def removeInfo_for_FEMB(dataFrame=pd.DataFrame(), fembID=24):
+    return dataFrame[dataFrame['femb_ids']!=int(fembID)]
+
+## Function to remove informations about a list of femb
+def removeInfo_for_FEMBs(dataFrame=pd.DataFrame(), femb_list=[]):
+    df = dataFrame
+    for femb_id in femb_list:
+        df = removeInfo_for_FEMB(dataFrame=df, fembID=femb_id)
+    return df
+
+def saveCorrectedCSV(path_to_csv='', femb_list=[], output_path='', datanames=['Pedestal', 'RMS']):
+    for dataname in datanames:
+        path_to_file = '/'.join([path_to_csv, dataname])
+        output_path_to_file = '/'.join([output_path, dataname])
+        for csvname in os.listdir(path_to_file):
+            dataFrame = pd.read_csv('/'.join([path_to_file, csvname]))
+            dataFrame = removeInfo_for_FEMBs(dataFrame=dataFrame, femb_list=femb_list)
+            dataFrame.to_csv('/'.join([output_path_to_file, csvname]), index=False)
 #
 def onedigit_hex_below16(onedigit='a'):
     h1 = 0
