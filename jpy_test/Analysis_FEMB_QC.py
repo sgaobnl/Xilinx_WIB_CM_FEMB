@@ -73,10 +73,16 @@ def get_gaussPdf(dataVec: pd.Series, nstd=3, skewed=False):
     '''
     # select data in the range (mean - std * nstd) and (mean + std * nstd)
     old_mean = np.mean(dataVec)
+    old_mean = np.mean(dataVec)
     old_std = np.std(dataVec)
     old_xmin = old_mean - nstd * old_std
     old_xmax = old_mean + nstd * old_std
     dataSelected = dataVec[(dataVec >= old_xmin) & (dataVec <= old_xmax)]
+    # print('old_mean = {}\t old_std = {}'.format(old_mean, old_std))
+    # ae, loc, scale = stats.skewnorm.fit(dataVec)
+    # old_xmin = loc - nstd*scale
+    # old_xmax = loc + nstd*scale
+    # dataSelected = dataVec[(dataVec >= old_xmin) & (dataVec <= old_xmax)]
     # get new mean and new std from the selected data
     new_mean = np.mean(dataSelected)
     new_std = np.std(dataSelected)
@@ -94,11 +100,23 @@ def get_gaussPdf(dataVec: pd.Series, nstd=3, skewed=False):
         pdf = norm.pdf(x, mean, std)
     else:
         # fit the dataSelected with a skewed gaussian distribution
-        ae, loc, scale = stats.skewnorm.fit(dataSelected)
+        # ae, loc, scale = stats.skewnorm.fit(dataSelected)
         # xmin = mean - nstd * std
         # xmax = mean + nstd * std
-        xmin = old_xmin
-        xmax = old_xmax
+        xmin = 0
+        xmax = 0
+        for _ in range(2): # maybe change the value 4
+            new_mean = np.mean(dataSelected)
+            new_std = np.std(dataSelected)
+            xmin = new_mean - nstd * new_std
+            xmax = new_mean + nstd * new_std
+            dataSelected = dataSelected[(dataSelected >= xmin) & (dataSelected <= xmax)]
+        ae, loc, scale = stats.skewnorm.fit(dataSelected)   
+        # print('mean = {}\tstd = {}'.format(mean, std))
+        # xmin = loc - ae
+        # xmax = loc + ae
+
+        # print(ae)
         x = np.linspace(xmin, xmax, 1000)
         pdf = stats.skewnorm.pdf(x, ae, loc, scale)
         ## now can return loc and scale of the distribution
@@ -211,31 +229,42 @@ def convert_Timing_to_float(df):
     return df
 
 def plot_mean_vs_ShapingTime(path_to_csv='norm_skewed_fit/pedestal_test_skewed/gaussian_pedestal.csv',
-                            BL='200mV', outputDir='', ylabel='pedestal', addToTitle='', skewed=False):
+                            BL='200mV', outputDir='', ylabel='pedestal', addToTitle='', skewed=False,
+                            ylim=[], colors=['red', 'green', 'blue', 'orange']):
     dataFrame = pd.read_csv(path_to_csv)
     dataFrame['BL'] = dataFrame['BL'].apply(lambda x: x[:-2])
     # condition to get the corresponding BL
     condition = (dataFrame['BL']==BL)
     dataFrame = convert_Gain_to_float(dataFrame)
+    ##
+    ## add the colors to the dataframe
+    colors_map = {4.7: colors[0], 7.8: colors[1], 14.0: colors[2], 25.0: colors[3]}
+    dataFrame['color'] = dataFrame['Gain'].map(colors_map)
     Gain = dataFrame[condition]['Gain'].unique()
+    Colors = dataFrame[condition]['color'].unique()
     #-> dataFrame for BL==200mV
     df = dataFrame[condition]
     # -> shaping time to float
     df = convert_Timing_to_float(df)
+    df = df.sort_values(by='ShapingTime', ascending=True)
     # plot baseline vs shapingTime
     plt.figure(figsize=(12,12))
-    for gain in tqdm(Gain):
+    for i, gain in tqdm(enumerate(Gain)):
         plt.errorbar(x=df[df['Gain']==gain]['ShapingTime'], y=df[df['Gain']==gain]['mean'],
                      yerr=df[df['Gain']==gain]['std'],
-                     label= '_'.join([BL, str(gain) + 'mV/fC']))
-        time.sleep(0.001)
-    plt.xlabel('Shaping time');plt.ylabel(' '.join([ylabel, 'mean']))
-    plt.xticks(ticks=df['ShapingTime'].unique(), labels=df['ShapingTime'].unique())
-    plt.legend()
-    plt.title('_'.join([addToTitle, 'shapingTime_vs_' + ylabel + 'Mean', BL]))
+                     label= '_'.join([BL, str(gain) + 'mV/fC']), ecolor=Colors[i], color=Colors[i])
+        # time.sleep(0.001)
+    plt.xlabel('Shaping time($\mu$s)', fontsize=15);plt.ylabel(' '.join([ylabel, 'mean']), fontsize=15)
+    if len(ylim)!=0:
+        plt.ylim(ylim)
+    plt.xticks(ticks=df['ShapingTime'].unique(), labels=df['ShapingTime'].unique(), fontsize=15)
+    plt.yticks(fontsize=15)
+    plt.legend(fontsize=15)
+    plt.title('_'.join([addToTitle, 'shapingTime_vs_' + ylabel + 'Mean', BL]), fontsize=15)
     plt.savefig(os.path.join(outputDir, '_'.join(['shapingTime_vs_' + ylabel + 'Mean', BL]) + '.png'))
     #
     # save another fig if the distribution is skewed
+    # shapingtime vs loc of max
     if skewed:
         plt.figure(figsize=(12,12))
         for gain in tqdm(Gain):
