@@ -1,7 +1,7 @@
 #**********************************************************
 #   Author: Rado
 #   email: radofana@gmail.com
-#   last modification: September 26, 2022
+#   last modification: October 24, 2022
 #**********************************************************
 #from binascii import hexlify
 #from codecs import readbuffer_encode
@@ -314,6 +314,9 @@ def removeInfo_for_FEMBs(dataFrame=pd.DataFrame(), femb_list=[]):
     return df
 
 def saveCorrectedCSV(path_to_csv='', femb_list=[], output_path='', datanames=['Pedestal', 'RMS']):
+    '''
+        This function removes RMS and Pedestal for some femb ids from the csv files
+    '''
     for dataname in datanames:
         path_to_file = '/'.join([path_to_csv, dataname])
         output_path_to_file = '/'.join([output_path, dataname])
@@ -321,3 +324,29 @@ def saveCorrectedCSV(path_to_csv='', femb_list=[], output_path='', datanames=['P
             dataFrame = pd.read_csv('/'.join([path_to_file, csvname]))
             dataFrame = removeInfo_for_FEMBs(dataFrame=dataFrame, femb_list=femb_list)
             dataFrame.to_csv('/'.join([output_path_to_file, csvname]), index=False)
+
+
+def separateCSV_foreachFEMB(path_to_csv='', output_path='', datanames=['Pedestal', 'RMS']):
+    '''
+        Having csv files of 4 fembs, this function separate one csv file to 4 csv files for each femb
+    '''
+    for dataname in datanames:
+        path_to_file = '/'.join([path_to_csv, dataname])
+        output_path_file = '/'.join([output_path, dataname])
+        # try to create the output folder
+        try:
+            os.mkdir(output_path_file)
+        except:
+            pass
+        #
+        for csvname in os.listdir(path_to_file):
+            part_csvname = csvname.split('.')[0]
+            #
+            # dataframe
+            df = pd.read_csv('/'.join([path_to_file, csvname]))
+            femb_ids = df['femb_ids'].unique()
+            for femb in femb_ids:
+                df_femb = df[df['femb_ids']==femb].reset_index().drop('index', axis=1)
+                femb_csvname = '_'.join(['femb{}'.format(femb), part_csvname + '.csv'])
+                df_femb.to_csv('/'.join([output_path_file, femb_csvname]), index=False)
+                print(femb_csvname)
