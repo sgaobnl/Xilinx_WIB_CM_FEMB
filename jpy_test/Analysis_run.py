@@ -59,5 +59,5 @@ if __name__ == '__main__':
     # asicdac = Analysis_FEMB_QC.ASICDAC_CALI(inputdir='../data/data_OK')
     # asicdac._plot()
     #Analysis_FEMB_QC.plot_stdDIVmean_vs_shapingTime(path_to_csv='norm_skewed_fit/pedestal_test_skewed/gaussian_pedestal.csv')
-    Analysis_FEMB_QC.separateCSV_foreachFEMB(path_to_csv='../../../WIB_SW_BNL/WIB_SW_BNL/results/PWR_RMS_Pedestal/LN/correctedCSV_rms_pedestal',
-                                            output_path='../../../WIB_SW_BNL/WIB_SW_BNL/results/LN', datanames=['Pedestal', 'RMS'])
+    Analysis_FEMB_QC.separateCSV_foreachFEMB(path_to_csv='../../../WIB_SW_BNL/WIB_SW_BNL/results/PWR_RMS_Pedestal/RT/correctedCSV_rms_pedestal',
+                                            output_path='../../../WIB_SW_BNL/WIB_SW_BNL/results/RT', datanames=['Pedestal', 'RMS'])
